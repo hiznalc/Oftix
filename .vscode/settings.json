@@ -1,0 +1,15 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "files.exclude": {
+    "node_modules": true,
+    "package-lock.json": true
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.js": "${capture}.test.js",
+    "package.json": "package-lock.json, .env*, .gitignore, nodemon.json"
+  },
+  "javascript.preferences.importModuleSpecifier": "relative"
+}

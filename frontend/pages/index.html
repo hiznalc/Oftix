@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oftix Network Inc. — Login</title>
+  <link rel="stylesheet" href="/assets/css/styles.css"/>
+</head>
+<body>
+<canvas id="login-fiber-canvas"></canvas>
+<div id="toast-container"></div>
+
+<!-- Admin / Staff access — top right -->
+<button class="admin-access-btn" id="admin-access-btn" title="Staff & Admin Access">
+  🔐 Staff / Admin Access
+</button>
+
+<!-- ── Login Page ── -->
+<div class="login-bg">
+  <div class="login-container">
+
+    <!-- Main card -->
+    <div class="login-card">
+
+      <!-- Logo + Motto -->
+      <div style="text-align:center;margin-bottom:30px">
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:10px">
+          <img src="/assets/images/oftix-logo-anim.svg" alt="Oftix Network Inc."
+            style="width:460px;max-width:92vw;height:auto;object-fit:contain"
+            onerror="this.style.display='none';document.getElementById('logo-fb').style.display='flex'"/>
+          <div id="logo-fb" style="display:none;align-items:center;gap:10px">
+            <div style="width:52px;height:52px;background:linear-gradient(135deg,#0055e5,#00c8f0);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;animation:pulse-glow 3s ease-in-out infinite">📡</div>
+            <span style="font-family:'Orbitron',sans-serif;font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#0055e5,#00c8f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent">OFTiX</span>
+          </div>
+        </div>
+        <p class="motto-text" style="font-family:'Nunito',sans-serif;margin-top:10px;text-align:center;font-size:.95rem;color:#4a6494;font-style:italic;line-height:1.65;max-width:380px;margin-left:auto;margin-right:auto">
+          "Built on fiber. Driven by speed. Trusted by thousands — because every connection you make matters."
+        </p>
+        <div style="width:180px;height:3px;background:linear-gradient(90deg,#0055e5,#00c8f0);border-radius:3px;margin:12px auto 0"></div>
+      </div>
+
+      <!-- Greeting -->
+      <h2 style="font-family:'Nunito',sans-serif;font-size:1.42rem;font-weight:900;color:#182848;margin-bottom:6px">
+        Welcome Back! 👋
+      </h2>
+      <p style="font-size:.96rem;color:#4a6494;margin-bottom:26px;line-height:1.55">
+        Sign in to your Oftix subscriber account.
+      </p>
+
+      <!-- Username -->
+      <div class="fg-lt">
+        <label class="fl-lt">Username</label>
+        <input type="text" class="inp-lt" id="login-user"
+          placeholder="Enter your username" autocomplete="username"/>
+      </div>
+
+      <!-- Password -->
+      <div class="fg-lt">
+        <label class="fl-lt">Password</label>
+        <input type="password" class="inp-lt" id="login-pass"
+          placeholder="Enter your password" autocomplete="current-password"/>
+      </div>
+
+      <!-- Login -->
+      <button class="btn btn-primary-lt btn-full" id="login-btn" style="margin-bottom:18px">
+        Sign In →
+      </button>
+
+      <!-- Register -->
+      <p style="text-align:center;font-size:1rem;color:#4a6494">
+        New subscriber?
+        <button id="reg-btn" style="background:none;border:none;color:#0055e5;cursor:pointer;font-size:1rem;font-weight:800;font-family:'Nunito',sans-serif">
+          Register here
+        </button>
+      </p>
+
+      <p style="text-align:center;font-size:.8rem;color:#b8ccee;margin-top:14px">💡 Enter your subscriber credentials to sign in.</p>
+      <div style="text-align:center;margin-top:18px;padding-top:14px;border-top:1.5px solid var(--cli-border)">
+        <p style="font-size:.78rem;color:#8aa4cc;line-height:2;margin:0">📞 <strong style="color:#4a6494">1800-OFTIX-1</strong> &nbsp;·&nbsp; ✉️ <strong style="color:#4a6494">support@oftix.net</strong></p>
+        <p style="font-size:.72rem;color:#b8ccee;margin-top:3px"><span style="width:7px;height:7px;border-radius:50%;background:#22cc66;display:inline-block;margin-right:5px;vertical-align:middle"></span>All Systems Online · 4 active branches</p>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- ══ ADMIN GATE MODAL ══ -->
+<div class="modal-overlay" id="admin-gate-modal" style="display:none">
+  <div class="modal-lt" style="max-width:440px">
+
+    <!-- PIN Step -->
+    <div id="pin-step">
+      <div class="modal-hdr">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="/assets/images/oftix-logo.svg" alt="Oftix" style="height:32px;object-fit:contain;filter:drop-shadow(0 0 5px rgba(0,150,255,.4))"
+            onerror="this.style.display='none'"/>
+          <h3 style="color:#182848;font-family:'Nunito',sans-serif;font-size:1.08rem;font-weight:800">
+            Staff / Admin Access
+          </h3>
+        </div>
+        <button class="modal-close" style="color:#4a6494" onclick="closeModal('admin-gate-modal')">×</button>
+      </div>
+      <p style="font-size:.95rem;color:#4a6494;margin-bottom:22px;line-height:1.65;text-align:center">
+        This area is for <strong style="color:#0055e5">Oftix staff only.</strong><br>
+        Please enter the 3-digit Security PIN to proceed.
+      </p>
+      <div style="margin-bottom:24px">
+        <label class="fl-lt" style="text-align:center;display:block;margin-bottom:14px">Security PIN</label>
+        <div class="pin-row">
+          <input type="password" class="pin-box pin-lt" maxlength="1" inputmode="numeric" placeholder="•"/>
+          <input type="password" class="pin-box pin-lt" maxlength="1" inputmode="numeric" placeholder="•"/>
+          <input type="password" class="pin-box pin-lt" maxlength="1" inputmode="numeric" placeholder="•"/>
+        </div>
+        <p style="font-size:.76rem;color:#b8ccee;text-align:center;margin-top:10px">Contact your system administrator for the PIN.</p>
+      </div>
+      <button class="btn btn-primary-lt btn-full" id="pin-verify-btn">🔐 Verify PIN</button>
+    </div>
+
+    <!-- Admin Login Step -->
+    <div id="admin-login-step" style="display:none">
+      <div class="modal-hdr">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="/assets/images/oftix-logo.svg" alt="Oftix" style="height:28px;object-fit:contain" onerror="this.style.display='none'"/>
+          <h3 style="color:#182848;font-family:'Nunito',sans-serif;font-size:1.08rem;font-weight:800">
+            ✅ Staff Login
+          </h3>
+        </div>
+        <button class="modal-close" style="color:#4a6494" onclick="closeModal('admin-gate-modal')">×</button>
+      </div>
+
+      <div class="fg-lt">
+        <label class="fl-lt">Login As</label>
+        <select class="inp-lt" id="admin-role-select">
+          <option value="branch">Branch Admin</option>
+          <option value="admin">Main Admin (Super Admin)</option>
+        </select>
+      </div>
+
+      <div id="branch-row" class="fg-lt">
+        <label class="fl-lt">Select Branch</label>
+        <select class="inp-lt" id="admin-branch-sel">
+          <option value="" disabled selected>— Choose your branch —</option>
+        </select>
+      </div>
+
+      <div class="fg-lt">
+        <label class="fl-lt">Username</label>
+        <input type="text" class="inp-lt" id="admin-user" placeholder="Enter your username"/>
+      </div>
+
+      <div class="fg-lt">
+        <label class="fl-lt">Password</label>
+        <input type="password" class="inp-lt" id="admin-pass" placeholder="Enter your password"/>
+      </div>
+
+      <p style="font-size:.78rem;color:#b8ccee;margin-bottom:16px;text-align:center">
+        Enter your staff credentials.
+      </p>
+      <button class="btn btn-primary-lt btn-full" id="admin-login-btn">Login as Staff →</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="/assets/js/script.js"></script>
+<script>
+// init
+</script>
+</body>
+</html>

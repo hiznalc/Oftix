@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oftix Network — My Account</title>
+  <link rel="stylesheet" href="/assets/css/styles.css"/>
+  <style>
+    @keyframes dot-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    [data-theme="dark"] .cli-wrap{background:#030c20}
+    [data-theme="dark"] .cli-sidebar{background:rgba(4,14,44,.97);border-right-color:rgba(0,100,255,.22)}
+    [data-theme="dark"] .cli-sidebar-logo{background:linear-gradient(135deg,rgba(0,40,120,.5),rgba(0,20,80,.3));border-bottom-color:rgba(0,100,255,.22)}
+    [data-theme="dark"] .cli-topbar{background:rgba(3,12,32,.96);border-bottom-color:rgba(0,100,255,.18);backdrop-filter:blur(16px)}
+    [data-theme="dark"] .cli-content{background:transparent}
+    [data-theme="dark"] .cli-nav-item{color:#8ab4cc}
+    [data-theme="dark"] .cli-nav-item:hover{background:rgba(0,100,255,.12);color:#00c8f0}
+    [data-theme="dark"] .cli-nav-item.active{background:rgba(0,100,255,.18);color:#00c8f0;border-left-color:#00c8f0}
+    [data-theme="dark"] .cli-sidebar-ft{border-top-color:rgba(0,100,255,.2)}
+    [data-theme="dark"] .u-name-cli{color:#ddeeff}
+    [data-theme="dark"] .u-role-cli{color:#6a90c4}
+    [data-theme="dark"] .d-card{background:rgba(4,14,44,.88)!important;border-color:rgba(0,100,255,.22)!important;color:#ddeeff}
+    [data-theme="dark"] .d-card-hdr{color:#00c8f0!important;border-bottom-color:rgba(0,100,255,.2)!important}
+    [data-theme="dark"] .d-stat{background:rgba(0,20,65,.6)!important;border-color:rgba(0,100,255,.25)!important}
+    [data-theme="dark"] .d-stat .sv{color:#00c8f0!important}
+    [data-theme="dark"] .d-stat .sl{color:#6a90c4!important}
+    [data-theme="dark"] .d-info{background:rgba(0,30,90,.5)!important;border-color:rgba(0,100,255,.2)!important}
+    [data-theme="dark"] .d-info .il{color:#6a90c4!important}
+    [data-theme="dark"] .d-info .iv{color:#ddeeff!important}
+    [data-theme="dark"] .d-plan-prev{background:rgba(0,20,65,.6)!important;border-color:rgba(0,100,255,.22)!important}
+    [data-theme="dark"] .d-plan-prev:hover{border-color:#00c8f0!important}
+    [data-theme="dark"] .d-inp{background:rgba(0,30,90,.5)!important;border-color:rgba(0,100,255,.3)!important;color:#ddeeff!important}
+    [data-theme="dark"] .d-inp::placeholder{color:rgba(100,150,200,.5)!important}
+    [data-theme="dark"] .d-tkt{background:rgba(0,20,65,.55)!important;border-color:rgba(0,100,255,.2)!important}
+    [data-theme="dark"] .d-howpay{background:rgba(0,20,60,.5)!important;border-color:rgba(0,100,255,.2)!important}
+    [data-theme="dark"] .prog-bar{background:rgba(0,100,255,.15)!important}
+    [data-theme="dark"] .d-sec-title{color:#ddeeff!important}
+    [data-theme="dark"] .d-sec-sub{color:#6a90c4!important}
+    [data-theme="dark"] .d-warn{background:rgba(255,152,0,.1)!important;border-color:rgba(255,152,0,.3)!important;color:#ffb74d!important}
+    [data-theme="dark"] .theme-btn{background:rgba(0,30,90,.7)!important;border-color:rgba(0,100,255,.3)!important;color:#00c8f0!important}
+    [data-theme="dark"] #login-fiber-canvas{opacity:0!important}
+    [data-theme="dark"] #bg-canvas-cli{opacity:1!important}
+    [data-theme="dark"] .modal-lt{background:rgba(4,14,44,.97)!important;border:1px solid rgba(0,100,255,.3)!important}
+    [data-theme="dark"] .modal-hdr-title{color:#ddeeff!important}
+    [data-theme="dark"] .modal-close{color:#6a90c4!important}
+    [data-theme="dark"] .al-info-lt{background:rgba(0,200,240,.1)!important;border-color:rgba(0,200,240,.3)!important;color:#00c8f0!important}
+    [data-theme="dark"] .al-success-lt{background:rgba(0,200,80,.1)!important;border-color:rgba(0,200,80,.3)!important;color:#40e090!important}
+    [data-theme="dark"] .inp-lt{background:rgba(0,30,90,.5)!important;border-color:rgba(0,100,255,.3)!important;color:#ddeeff!important}
+    [data-theme="dark"] .inp-lt::placeholder{color:rgba(100,150,200,.5)!important}
+    [data-theme="dark"] .fl-lt{color:#8ab4cc!important}
+    [data-theme="dark"] .upload-box{background:rgba(0,30,90,.5)!important;border-color:rgba(0,100,255,.3)!important;color:#8ab4cc!important}
+    [data-theme="dark"] .cli-table thead tr{background:rgba(0,20,65,.6)!important}
+    [data-theme="dark"] .cli-table thead th{color:#6a90c4!important;border-color:rgba(0,100,255,.2)!important}
+    [data-theme="dark"] .cli-table tbody tr{border-color:rgba(0,100,255,.1)!important}
+    [data-theme="dark"] .cli-table tbody tr:hover{background:rgba(0,30,90,.4)!important}
+    [data-theme="dark"] .cli-table td{color:#ddeeff!important}
+    [data-theme="dark"] .btn-outline-lt{border-color:rgba(0,100,255,.4)!important;color:#00c8f0!important}
+    [data-theme="dark"] .btn-outline-lt:hover{background:rgba(0,100,255,.15)!important}
+    [data-theme="dark"] .d-strip{background:rgba(255,255,255,.06)!important}
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas-cli" style="position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;opacity:0;transition:opacity .6s ease"></canvas>
+<canvas id="login-fiber-canvas"></canvas>
+<div id="toast-container"></div>
+
+<div class="cli-wrap">
+
+  <aside class="cli-sidebar">
+    <div class="cli-sidebar-logo" style="padding:14px 16px 12px;border-bottom:1.5px solid var(--cli-border);background:linear-gradient(135deg,rgba(0,60,180,.06),rgba(0,200,240,.04))">
+      <img src="/assets/images/oftix-logo-anim.svg" alt="Oftix Network Inc."
+        style="width:100%;max-width:220px;height:auto;object-fit:contain;display:block"
+        onerror="this.outerHTML='<span style=font-family:Orbitron,sans-serif;font-size:1rem;font-weight:900;color:#0055e5>OFTiX</span>'"/>
+    </div>
+    <nav class="cli-nav">
+      <div style="padding:10px 18px 5px;font-size:.61rem;font-weight:800;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.1em">Menu</div>
+      <div class="cli-nav-item active" data-sec="home"><span class="n-icon">⚡</span><span class="n-label">Dashboard</span></div>
+      <div class="cli-nav-item" data-sec="profile"><span class="n-icon">👤</span><span class="n-label">My Profile</span></div>
+      <div class="cli-nav-item locked" data-sec="plan"><span class="n-icon">📶</span><span class="n-label">My Plan</span><span class="lock-icon">🔒</span></div>
+      <div class="cli-nav-item locked" data-sec="billing"><span class="n-icon">💳</span><span class="n-label">Billing &amp; Payment</span><span class="lock-icon">🔒</span></div>
+      <div class="cli-nav-item locked" data-sec="tickets"><span class="n-icon">🎫</span><span class="n-label">Support Tickets</span><span class="lock-icon">🔒</span></div>
+      <div style="padding:10px 18px 5px;margin-top:4px;font-size:.61rem;font-weight:800;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.1em">Help</div>
+      <div class="cli-nav-item" id="contact-support-nav" onclick="openContactModal()"><span class="n-icon">📞</span><span class="n-label">Contact Support</span></div>
+    </nav>
+    <div class="cli-sidebar-ft" style="padding:18px 18px;border-top:2px solid var(--cli-border)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#fff;flex-shrink:0;box-shadow:0 3px 12px rgba(0,85,229,.3)" id="u-avatar-disp">C</div>
+        <div>
+          <div class="u-name-cli" style="font-size:.93rem;font-weight:800;color:var(--cli-text)" id="u-name-disp">Client</div>
+          <div class="u-role-cli" style="font-size:.75rem;color:var(--cli-muted)" id="u-role-disp">Subscriber</div>
+        </div>
+      </div>
+      <button class="btn btn-outline-lt btn-full" id="logout-btn" style="font-size:.88rem;padding:11px">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <div class="cli-main">
+    <header class="cli-topbar">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="hamburger lt"><span></span><span></span><span></span></div>
+        <span class="d-sec-title" style="font-size:.9rem;color:var(--cli-text);font-weight:700" id="cli-page-title">Dashboard</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:.78rem;padding:5px 12px;border-radius:20px;border:1px solid rgba(0,200,80,.22);background:rgba(0,200,80,.08);color:var(--success);display:flex;align-items:center;gap:6px">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--success);animation:dot-pulse 2s ease-in-out infinite;display:inline-block"></span>Active
+        </div>
+        <button class="theme-btn" id="theme-toggle-btn" title="Toggle dark mode"
+          style="width:38px;height:38px;border-radius:10px;border:1.5px solid var(--cli-border);background:var(--cli-card2);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .3s ease">🌙</button>
+      </div>
+    </header>
+
+    <div class="cli-content">
+
+      <!-- HOME -->
+      <div class="cli-sec active" id="cli-sec-home">
+
+        <!-- UNAPPLIED -->
+        <div id="view-unapplied">
+          <div style="max-width:680px;margin:0 auto">
+            <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:20px;padding:52px 40px 44px;margin-bottom:22px;text-align:center;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,85,229,.05),rgba(0,200,240,.03));pointer-events:none"></div>
+              <div style="margin-bottom:24px;animation:float 4s ease-in-out infinite"><img src="/assets/images/oftix-logo-anim.svg" alt="OFTiX" style="width:280px;max-width:70vw;height:auto;object-fit:contain;display:block;margin:0 auto"/></div>
+              <h2 class="d-sec-title" style="font-size:1.75rem;font-weight:900;color:var(--cli-text);margin-bottom:8px">Welcome to OFTIX!</h2>
+              <p class="d-sec-sub" style="color:var(--cli-muted);font-size:1rem;line-height:1.75;max-width:400px;margin:0 auto 30px">Apply for a fiber internet plan to activate your account and unlock all dashboard features.</p>
+              <button class="btn btn-primary-lt" id="apply-cta-btn" style="font-size:1.05rem;padding:16px 44px" onclick="openModal('apply-modal')">⚡ Apply for Connection</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div class="d-plan-prev" onclick="openModal('apply-modal')" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:16px;padding:22px;cursor:pointer;transition:all .28s ease">
+                <div style="font-size:.68rem;font-weight:800;color:var(--cli-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Fiber 25</div>
+                <div style="font-size:2.3rem;font-weight:900;color:var(--cli-accent);line-height:1">25<small style="font-size:.8rem;font-weight:600">Mbps</small></div>
+                <div style="font-size:.95rem;font-weight:800;color:var(--cli-text);margin:6px 0 3px">₱999<span style="font-size:.75rem;font-weight:500;color:var(--cli-muted)">/mo</span></div>
+                <div style="font-size:.78rem;color:var(--cli-muted)">Light browsing &amp; streaming</div>
+              </div>
+              <div onclick="openModal('apply-modal')" style="background:linear-gradient(135deg,#0044cc,#0066ff);border-radius:16px;padding:22px;cursor:pointer;transition:all .28s ease;position:relative;overflow:hidden">
+                <div style="position:absolute;top:10px;right:10px;background:rgba(255,255,255,.2);color:#fff;font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:20px">POPULAR</div>
+                <div style="font-size:.68rem;font-weight:800;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Fiber 50</div>
+                <div style="font-size:2.3rem;font-weight:900;color:#fff;line-height:1">50<small style="font-size:.8rem;font-weight:600">Mbps</small></div>
+                <div style="font-size:.95rem;font-weight:800;color:#fff;margin:6px 0 3px">₱1,499<span style="font-size:.75rem;font-weight:500;opacity:.8">/mo</span></div>
+                <div style="font-size:.78rem;color:rgba(255,255,255,.75)">Families &amp; HD streaming</div>
+              </div>
+              <div class="d-plan-prev" onclick="openModal('apply-modal')" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:16px;padding:22px;cursor:pointer;transition:all .28s ease">
+                <div style="font-size:.68rem;font-weight:800;color:var(--cli-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Fiber 100</div>
+                <div style="font-size:2.3rem;font-weight:900;color:var(--cli-accent);line-height:1">100<small style="font-size:.8rem;font-weight:600">Mbps</small></div>
+                <div style="font-size:.95rem;font-weight:800;color:var(--cli-text);margin:6px 0 3px">₱1,999<span style="font-size:.75rem;font-weight:500;color:var(--cli-muted)">/mo</span></div>
+                <div style="font-size:.78rem;color:var(--cli-muted)">WFH &amp; heavy users</div>
+              </div>
+              <div class="d-plan-prev" onclick="openModal('apply-modal')" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:16px;padding:22px;cursor:pointer;transition:all .28s ease">
+                <div style="font-size:.68rem;font-weight:800;color:var(--cli-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Fiber 200</div>
+                <div style="font-size:2.3rem;font-weight:900;color:var(--cli-accent);line-height:1">200<small style="font-size:.8rem;font-weight:600">Mbps</small></div>
+                <div style="font-size:.95rem;font-weight:800;color:var(--cli-text);margin:6px 0 3px">₱2,999<span style="font-size:.75rem;font-weight:500;color:var(--cli-muted)">/mo</span></div>
+                <div style="font-size:.78rem;color:var(--cli-muted)">Gaming &amp; power users</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- APPLIED -->
+        <div id="view-applied" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px">
+            <div>
+              <h2 class="d-sec-title" style="font-size:1.45rem;font-weight:900;color:var(--cli-text);margin-bottom:3px">Good day! 👋 <span id="disp-name" style="color:var(--cli-accent)">User</span></h2>
+              <p class="d-sec-sub" style="color:var(--cli-muted);font-size:.9rem">Here's your account overview</p>
+            </div>
+            <span style="padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:700;border:1.5px solid rgba(0,200,80,.25);background:rgba(0,200,80,.08);color:var(--success)">✅ Account Active</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-bottom:22px">
+            <div class="d-stat" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:16px;padding:20px 18px;position:relative;overflow:hidden;transition:all .28s ease">
+              <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--accent))"></div>
+              <div style="font-size:1.6rem;margin-bottom:8px">📶</div>
+              <div class="sv" style="font-size:1.55rem;font-weight:900;color:var(--cli-accent);line-height:1;margin-bottom:4px" id="disp-speed">50 Mbps</div>
+              <div class="sl" style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cli-muted)">Your Speed</div>
+            </div>
+            <div class="d-stat" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:16px;padding:20px 18px;position:relative;overflow:hidden;transition:all .28s ease">
+              <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--success),#00e676)"></div>
+              <div style="font-size:1.6rem;margin-bottom:8px">✅</div>
+              <div class="sv" style="font-size:1.35rem;font-weight:900;color:var(--success);line-height:1;margin-bottom:4px">Active</div>
+              <div class="sl" style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cli-muted)">Status</div>
+            </div>
+            <div class="d-stat" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:16px;padding:20px 18px;position:relative;overflow:hidden;transition:all .28s ease">
+              <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7b2fff,var(--accent))"></div>
+              <div style="font-size:1.6rem;margin-bottom:8px">💳</div>
+              <div class="sv" style="font-size:1.55rem;font-weight:900;color:var(--cli-accent);line-height:1;margin-bottom:4px" id="disp-price">₱1,499</div>
+              <div class="sl" style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cli-muted)">Monthly Bill</div>
+            </div>
+            <div class="d-stat" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:16px;padding:20px 18px;position:relative;overflow:hidden;transition:all .28s ease">
+              <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--warning),#ffcc02)"></div>
+              <div style="font-size:1.6rem;margin-bottom:8px">📅</div>
+              <div class="sv" style="font-size:1rem;font-weight:900;color:var(--warning);line-height:1.25;margin-bottom:4px" id="disp-due">Apr 5</div>
+              <div class="sl" style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cli-muted)">Due Date</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+            <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:24px">
+              <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">🔔 Billing Notice</div>
+              <div class="d-warn" style="background:rgba(255,152,0,.08);border:1.5px solid rgba(255,152,0,.22);border-radius:12px;padding:13px 15px;margin-bottom:16px;font-size:.88rem;color:#7a4200;line-height:1.6">
+                ⚠️ Due: <strong id="disp-due2">April 5, 2026</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--cli-card2);border-radius:10px;margin-bottom:14px">
+                <div><div style="font-size:.93rem;font-weight:800;color:var(--cli-text)">March 2026</div><div style="font-size:.78rem;color:var(--cli-muted)">Internet Service</div></div>
+                <div style="text-align:right"><div style="font-size:1.1rem;font-weight:900;color:var(--cli-accent)" id="disp-price2">₱1,499</div><span class="badge badge-warning" style="font-size:.68rem">Pending</span></div>
+              </div>
+              <button class="btn btn-primary-lt btn-full" onclick="openModal('payment-modal')">💳 Pay Now</button>
+            </div>
+            <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:24px">
+              <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">⚡ Quick Actions</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <button class="btn btn-outline-lt btn-full" onclick="openModal('payment-modal')" style="display:flex;align-items:center;gap:10px;justify-content:flex-start;padding:12px 16px;text-align:left"><span style="font-size:1.1rem">💳</span>Make a Payment</button>
+                <button class="btn btn-outline-lt btn-full" onclick="document.querySelector('[data-sec=plan]').click()" style="display:flex;align-items:center;gap:10px;justify-content:flex-start;padding:12px 16px;text-align:left"><span style="font-size:1.1rem">📶</span>View My Plan</button>
+                <button class="btn btn-outline-lt btn-full" onclick="document.querySelector('[data-sec=tickets]').click()" style="display:flex;align-items:center;gap:10px;justify-content:flex-start;padding:12px 16px;text-align:left"><span style="font-size:1.1rem">🎫</span>Submit a Ticket</button>
+                <button class="btn btn-outline-lt btn-full" onclick="openContactModal()" style="display:flex;align-items:center;gap:10px;justify-content:flex-start;padding:12px 16px;text-align:left"><span style="font-size:1.1rem">📞</span>Contact Support</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="cli-sec" id="cli-sec-profile">
+        <div style="margin-bottom:22px"><h2 class="d-sec-title" style="font-size:1.4rem;font-weight:900;color:var(--cli-text)">My Profile</h2><p class="d-sec-sub" style="color:var(--cli-muted);font-size:.9rem;margin-top:2px">Your personal account details</p></div>
+        <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:28px">
+          <div style="display:flex;align-items:center;gap:20px;padding-bottom:22px;margin-bottom:22px;border-bottom:2px solid var(--cli-border)">
+            <div style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;box-shadow:0 6px 24px rgba(0,85,229,.28);flex-shrink:0" id="u-avatar-lg">C</div>
+            <div>
+              <div class="d-sec-title" style="font-size:1.3rem;font-weight:900;color:var(--cli-text)" id="disp-name2">—</div>
+              <div class="d-sec-sub" style="font-size:.88rem;color:var(--cli-muted);margin-top:2px">Active Subscriber</div>
+              <span style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700;background:rgba(0,200,80,.1);color:var(--success);border:1.5px solid rgba(0,200,80,.25)">✅ Verified</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="d-info" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:14px 16px"><div class="il" style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Full Name</div><div class="iv" style="font-weight:700;color:var(--cli-text)" id="disp-name3">—</div></div>
+            <div class="d-info" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:14px 16px"><div class="il" style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Branch</div><div class="iv" style="font-weight:700;color:var(--cli-text)" id="disp-branch">—</div></div>
+            <div class="d-info" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:14px 16px"><div class="il" style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Current Plan</div><div class="iv" style="font-weight:700;color:var(--cli-text)" id="disp-plan">—</div></div>
+            <div class="d-info" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:14px 16px"><div class="il" style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Status</div><div style="font-weight:700;color:var(--success)">● Active</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MY PLAN -->
+      <div class="cli-sec" id="cli-sec-plan">
+        <div style="margin-bottom:22px"><h2 class="d-sec-title" style="font-size:1.4rem;font-weight:900;color:var(--cli-text)">My Plan</h2><p class="d-sec-sub" style="color:var(--cli-muted);font-size:.9rem;margin-top:2px">Your subscription details and usage</p></div>
+        <div style="background:linear-gradient(135deg,#0033aa,#0055e5,#1a77ff);border-radius:20px;padding:32px;margin-bottom:18px;color:#fff;position:relative;overflow:hidden">
+          <div style="position:absolute;right:-30px;top:-30px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+          <div style="position:absolute;right:40px;bottom:-50px;width:150px;height:150px;border-radius:50%;background:rgba(0,200,240,.1)"></div>
+          <div style="position:relative;z-index:1">
+            <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;opacity:.8;margin-bottom:8px">Current Plan</div>
+            <div style="font-size:1.9rem;font-weight:900;margin-bottom:4px" id="plan-name-big">Fiber 50</div>
+            <div style="font-size:3.5rem;font-weight:900;line-height:1;margin-bottom:6px" id="plan-speed-big">50 <span style="font-size:1.4rem;font-weight:600">Mbps</span></div>
+            <div style="font-size:1.25rem;font-weight:700;opacity:.9" id="plan-price-big">₱1,499/month</div>
+            <div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);border-radius:20px;padding:8px 18px;font-size:.87rem;font-weight:700">📅 Due: <strong id="plan-due-big">April 5, 2026</strong></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+          <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:24px">
+            <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">📊 Data Usage</div>
+            <div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;margin-bottom:7px"><span style="font-size:.87rem;color:var(--cli-muted)">Download</span><span style="font-size:.87rem;font-weight:700;color:var(--cli-text)">342 GB / ∞</span></div><div class="prog-bar"><div class="prog-fill" style="width:40%"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:7px"><span style="font-size:.87rem;color:var(--cli-muted)">Upload</span><span style="font-size:.87rem;font-weight:700;color:var(--cli-text)">48 GB / ∞</span></div><div class="prog-bar"><div class="prog-fill" style="width:15%;background:linear-gradient(90deg,var(--accent2),var(--accent))"></div></div></div>
+            <div style="margin-top:18px;padding-top:14px;border-top:1.5px solid var(--cli-border)"><button class="btn btn-primary-lt btn-full" onclick="openModal('payment-modal')">💳 Pay Bill</button></div>
+          </div>
+          <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:24px">
+            <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">📋 Included</div>
+            <div style="display:flex;flex-direction:column;gap:11px;font-size:.92rem">
+              <div style="display:flex;align-items:center;gap:9px;color:var(--cli-text)"><span style="color:var(--success)">✅</span>Unlimited Data</div>
+              <div style="display:flex;align-items:center;gap:9px;color:var(--cli-text)"><span style="color:var(--success)">✅</span>Free Modem / Router</div>
+              <div style="display:flex;align-items:center;gap:9px;color:var(--cli-text)"><span style="color:var(--success)">✅</span>24/7 Technical Support</div>
+              <div style="display:flex;align-items:center;gap:9px;color:var(--cli-text)"><span style="color:var(--success)">✅</span>99.9% Uptime SLA</div>
+              <div style="display:flex;align-items:center;gap:9px;color:var(--cli-text)"><span style="color:var(--success)">✅</span>Static IP on request</div>
+              <div style="display:flex;align-items:center;gap:9px;color:var(--cli-muted)"><span>❌</span>Priority Support</div>
+            </div>
+          </div>
+        </div>
+        <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:24px">
+          <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">📍 Installation Status</div>
+          <div class="timeline">
+            <div class="tl-item done"><div class="tl-title">Application Submitted</div><div class="tl-date">March 10, 2026</div></div>
+            <div class="tl-item done"><div class="tl-title">Application Approved</div><div class="tl-date">March 11, 2026</div></div>
+            <div class="tl-item done"><div class="tl-title">Installation Scheduled</div><div class="tl-date">March 13, 2026</div></div>
+            <div class="tl-item done"><div class="tl-title">Installation Complete ✅</div><div class="tl-date">March 15, 2026</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BILLING -->
+      <div class="cli-sec" id="cli-sec-billing">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px">
+          <div><h2 class="d-sec-title" style="font-size:1.4rem;font-weight:900;color:var(--cli-text)">Billing &amp; Payment</h2><p class="d-sec-sub" style="color:var(--cli-muted);font-size:.9rem;margin-top:2px">Pay your bill and view history</p></div>
+          <button class="btn btn-primary-lt" onclick="openModal('payment-modal')">💳 Pay Now</button>
+        </div>
+        <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:26px;margin-bottom:18px">
+          <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">📄 Current Bill</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+            <div class="d-info" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:14px 16px"><div class="il" style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Period</div><div class="iv" style="font-weight:700;color:var(--cli-text)">March 2026</div></div>
+            <div class="d-info" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:14px 16px"><div class="il" style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Amount Due</div><div class="iv" style="font-size:1.5rem;font-weight:900;color:var(--cli-accent)" id="disp-price3">₱1,499.00</div></div>
+            <div class="d-info" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:14px 16px"><div class="il" style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Due Date</div><div class="iv" style="font-weight:700;color:var(--warning)" id="disp-due3">April 5, 2026</div></div>
+            <div style="background:rgba(255,152,0,.07);border:1.5px solid rgba(255,152,0,.25);border-radius:12px;padding:14px 16px"><div style="font-size:.68rem;font-weight:700;color:#7a5200;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Status</div><span class="badge badge-warning">⏳ Pending</span></div>
+          </div>
+          <button class="btn btn-primary-lt btn-full" onclick="openModal('payment-modal')">💳 Pay This Bill</button>
+        </div>
+        <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:26px;margin-bottom:18px">
+          <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">💡 How to Pay</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="d-howpay" style="background:rgba(0,85,229,.04);border:1.5px solid var(--cli-border);border-radius:14px;padding:20px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="font-size:1.8rem">📱</span><div><div style="font-weight:900;color:var(--cli-text)">GCash</div><div style="font-size:.78rem;color:var(--cli-muted)">Fast &amp; convenient</div></div></div>
+              <ol style="padding-left:18px;font-size:.87rem;color:var(--cli-text);line-height:2;margin-bottom:14px">
+                <li>Open <strong>GCash</strong> app</li>
+                <li>Tap <strong>Send Money</strong></li>
+                <li>Send to: <strong id="disp-gcash" style="color:var(--cli-accent)">09171234567</strong></li>
+                <li>Enter exact amount</li>
+                <li>Screenshot &amp; upload receipt</li>
+              </ol>
+              <button class="btn btn-primary-lt btn-full" onclick="openModal('payment-modal')">📱 Pay via GCash</button>
+            </div>
+            <div class="d-howpay" style="background:rgba(0,85,229,.04);border:1.5px solid var(--cli-border);border-radius:14px;padding:20px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="font-size:1.8rem">🏢</span><div><div style="font-weight:900;color:var(--cli-text)">Walk-in / Cash</div><div style="font-size:.78rem;color:var(--cli-muted)">Pay at the branch</div></div></div>
+              <div style="font-size:.87rem;color:var(--cli-text);line-height:2;margin-bottom:14px">
+                <div><strong>Branch:</strong> <span id="disp-branch2">Oftix Quezon City</span></div>
+                <div><strong>Hours:</strong> Mon–Sat, 8AM–6PM</div>
+                <div><strong>Bring:</strong> Name &amp; contact #</div>
+                <div><strong>Payment:</strong> Cash accepted</div>
+              </div>
+              <button class="btn btn-outline-lt btn-full" onclick="openModal('payment-modal')">🏢 Walk-in Payment</button>
+            </div>
+          </div>
+        </div>
+        <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;overflow:hidden">
+          <div style="padding:16px 22px;border-bottom:2px solid var(--cli-border);font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em">📋 Payment History</div>
+          <table class="cli-table"><thead><tr><th>Period</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>March 2026</td><td>₱1,499.00</td><td>—</td><td>—</td><td><span class="badge badge-warning">Pending</span></td></tr>
+            <tr><td>February 2026</td><td>₱1,499.00</td><td>GCash</td><td>Feb 5, 2026</td><td><span class="badge badge-success">Paid ✅</span></td></tr>
+            <tr><td>January 2026</td><td>₱1,499.00</td><td>Walk-in</td><td>Jan 4, 2026</td><td><span class="badge badge-success">Paid ✅</span></td></tr>
+            <tr><td>December 2025</td><td>₱1,499.00</td><td>GCash</td><td>Dec 3, 2025</td><td><span class="badge badge-success">Paid ✅</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- TICKETS -->
+      <div class="cli-sec" id="cli-sec-tickets">
+        <div style="margin-bottom:22px"><h2 class="d-sec-title" style="font-size:1.4rem;font-weight:900;color:var(--cli-text)">Support Tickets</h2><p class="d-sec-sub" style="color:var(--cli-muted);font-size:.9rem;margin-top:2px">Get help from our technical team</p></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:26px">
+            <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">🎫 New Ticket</div>
+            <div class="fg-lt"><label class="fl-lt">Subject</label><input type="text" class="inp-lt d-inp" id="ticket-subject" placeholder="e.g. Slow internet, No connection"/></div>
+            <div class="fg-lt"><label class="fl-lt">Issue Type</label><select class="inp-lt d-inp"><option value="" disabled selected>— Select type —</option><option>Slow Connection</option><option>No Internet</option><option>Router Problem</option><option>Billing Question</option><option>Other</option></select></div>
+            <div class="fg-lt"><label class="fl-lt">Description</label><textarea class="inp-lt d-inp" id="ticket-msg" rows="4" placeholder="Describe your issue…"></textarea></div>
+            <button class="btn btn-primary-lt btn-full" onclick="submitTicket()">📤 Submit Ticket</button>
+            <p style="font-size:.8rem;color:var(--cli-muted);text-align:center;margin-top:10px">Response within <strong>24 hours</strong></p>
+          </div>
+          <div class="d-card" style="background:var(--cli-card);border:2px solid var(--cli-border);border-radius:18px;padding:26px">
+            <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">📋 My Tickets</div>
+            <div class="d-tkt" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:16px;margin-bottom:12px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div style="font-weight:800;color:var(--cli-text)">Slow connection</div><span class="badge badge-warning">Open</span></div>
+              <div style="font-size:.78rem;color:var(--cli-muted);margin-bottom:5px">March 15, 2026</div>
+              <div style="font-size:.87rem;color:var(--cli-text)">Internet is very slow in the afternoon.</div>
+            </div>
+            <div class="d-tkt" style="background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px;padding:16px;margin-bottom:18px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div style="font-weight:800;color:var(--cli-text)">No internet</div><span class="badge badge-success">Resolved</span></div>
+              <div style="font-size:.78rem;color:var(--cli-muted);margin-bottom:5px">March 10, 2026</div>
+              <div style="font-size:.87rem;color:var(--success)">✅ Router restarted remotely. Issue resolved.</div>
+            </div>
+            <div style="border-top:2px solid var(--cli-border);padding-top:16px">
+              <button class="btn btn-outline-lt btn-full" onclick="openContactModal()" style="display:flex;align-items:center;justify-content:center;gap:8px"><span>📞</span>Contact Support</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- APPLY MODAL -->
+<div class="modal-overlay" id="apply-modal" style="display:none">
+  <div class="modal-lt" style="max-width:500px">
+    <div class="modal-hdr"><div style="display:flex;align-items:center;gap:10px"><img src="/assets/images/oftix-logo.svg" alt="" style="height:28px;filter:drop-shadow(0 0 4px rgba(0,150,255,.4))" onerror="this.style.display='none'"/><h3 class="modal-hdr-title" style="font-family:'Nunito',sans-serif">⚡ Apply for Connection</h3></div><button class="modal-close" onclick="closeModal('apply-modal')">×</button></div>
+    <div class="alert al-info-lt" style="font-size:.87rem">📌 Our team will contact you within 24 hours to schedule installation.</div>
+    <div class="fg-lt"><label class="fl-lt">Full Name</label><input type="text" class="inp-lt" id="apply-name" placeholder="Your full name"/></div>
+    <div class="fg-lt"><label class="fl-lt">Installation Address</label><input type="text" class="inp-lt" id="apply-address" placeholder="Where should we install?"/></div>
+    <div class="fg-lt"><label class="fl-lt">Contact Number</label><input type="tel" class="inp-lt" id="apply-contact" placeholder="09XX-XXX-XXXX"/></div>
+    <div class="fg-lt"><label class="fl-lt">Choose a Plan</label><select class="inp-lt" id="apply-plan"><option value="" disabled selected>— Select your plan —</option></select></div>
+    <div class="alert al-success-lt" style="font-size:.86rem">✅ Once approved, all modules will be unlocked.</div>
+    <button class="btn btn-primary-lt btn-full" onclick="submitApplication()">🚀 Submit Application</button>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payment-modal" style="display:none">
+  <div class="modal-lt" style="max-width:500px">
+    <div class="modal-hdr"><h3 class="modal-hdr-title" style="font-family:'Nunito',sans-serif">💳 Make a Payment</h3><button class="modal-close" onclick="closeModal('payment-modal')">×</button></div>
+    <div style="background:linear-gradient(135deg,#0044cc,#0066ff);border-radius:14px;padding:18px 20px;margin-bottom:18px;color:#fff;display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:.7rem;opacity:.8;font-weight:700;text-transform:uppercase;letter-spacing:.07em">Amount Due</div><div style="font-size:1.8rem;font-weight:900">₱1,499.00</div></div>
+      <div style="text-align:right"><div style="font-size:.7rem;opacity:.8;font-weight:700;text-transform:uppercase;letter-spacing:.07em">Due Date</div><div style="font-size:1rem;font-weight:800">April 5, 2026</div></div>
+    </div>
+    <div class="fg-lt"><label class="fl-lt">Payment Method</label><select class="inp-lt" id="pay-method"><option value="" disabled selected>— Select method —</option><option value="gcash">📱 GCash</option><option value="walkin">🏢 Walk-in / Cash</option></select></div>
+    <div id="gcash-details" style="display:none">
+      <div style="background:rgba(0,85,229,.07);border:1.5px solid var(--cli-border);border-radius:12px;padding:15px;margin-bottom:13px;font-size:.87rem;line-height:2">
+        Send to: <strong id="gcash-num-disp" style="color:var(--cli-accent)">09171234567</strong> &nbsp;|&nbsp; Amount: <strong>₱1,499.00</strong>
+      </div>
+      <div class="fg-lt"><label class="fl-lt">Reference Number</label><input type="text" class="inp-lt" placeholder="GCash reference #"/></div>
+      <div class="fg-lt"><label class="fl-lt">Upload Receipt</label><div class="upload-box" onclick="this.querySelector('input').click()"><div class="u-icon">📄</div><p>Click to upload receipt</p><p style="font-size:.78rem;color:var(--cli-dim);margin-top:3px">JPG, PNG (max 5MB)</p><input type="file" accept="image/*" style="display:none" onchange="toast('Receipt uploaded! ✅','success',3000,false)"/></div></div>
+    </div>
+    <div id="walkin-details" style="display:none">
+      <div style="background:rgba(0,85,229,.07);border:1.5px solid var(--cli-border);border-radius:12px;padding:15px;margin-bottom:13px;font-size:.87rem;line-height:2">
+        <strong>Branch:</strong> <span id="walkin-branch-disp">Oftix Quezon City</span><br><strong>Hours:</strong> Mon–Sat, 8AM–6PM<br><strong>Bring:</strong> Name &amp; contact number
+      </div>
+    </div>
+    <button class="btn btn-primary-lt btn-full" onclick="submitPayment()">✅ Confirm Payment</button>
+    <p style="font-size:.8rem;color:var(--cli-muted);text-align:center;margin-top:10px">Verified within 24 hours.</p>
+  </div>
+</div>
+
+<!-- CONTACT SUPPORT MODAL -->
+<div class="modal-overlay" id="contact-modal" style="display:none">
+  <div class="modal-lt" style="max-width:420px">
+    <div class="modal-hdr"><h3 class="modal-hdr-title" style="font-family:'Nunito',sans-serif">📞 Contact Support</h3><button class="modal-close" onclick="closeModal('contact-modal')">×</button></div>
+    <div style="text-align:center;padding:8px 0 20px">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 12px;box-shadow:0 6px 24px rgba(0,85,229,.28)">🏢</div>
+      <div style="font-size:1.1rem;font-weight:900;color:var(--cli-text)" id="contact-branch-name">Oftix Branch</div>
+      <div style="font-size:.85rem;color:var(--cli-muted);margin-top:3px" id="contact-branch-addr">Metro Manila</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px">
+        <span style="font-size:1.5rem;flex-shrink:0">📱</span>
+        <div><div style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">GCash / Contact</div><div style="font-size:1.05rem;font-weight:800;color:var(--cli-accent)" id="contact-gcash">09171234567</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px">
+        <span style="font-size:1.5rem;flex-shrink:0">☎️</span>
+        <div><div style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Support Hotline</div><div style="font-size:1.05rem;font-weight:800;color:var(--cli-accent)">1800-OFTIX-1</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px">
+        <span style="font-size:1.5rem;flex-shrink:0">🕐</span>
+        <div><div style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Office Hours</div><div style="font-size:.92rem;font-weight:700;color:var(--cli-text)">Mon – Sat, 8:00 AM – 6:00 PM</div></div>
+      </div>
+    </div>
+    <div style="background:rgba(0,85,229,.06);border:1.5px solid var(--cli-border);border-radius:12px;padding:13px 15px;font-size:.83rem;color:var(--cli-muted);text-align:center;line-height:1.65;margin-bottom:14px">
+      For technical issues, submit a <strong style="color:var(--cli-accent)">Support Ticket</strong> — response within 24 hrs.
+    </div>
+    <button class="btn btn-primary-lt btn-full" onclick="closeModal('contact-modal')">Got it!</button>
+  </div>
+</div>
+
+<script src="/assets/js/script.js"></script>
+<script>
+// ── Dark mode toggle + fiber canvas ──
+(function(){
+  const btn = document.getElementById('theme-toggle-btn');
+  const html = document.documentElement;
+  const bgCli = document.getElementById('bg-canvas-cli');
+  let dark = false;
+
+  function applyTheme(){
+    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    btn.textContent = dark ? '☀️' : '🌙';
+    if(bgCli) bgCli.style.opacity = dark ? '1' : '0';
+    const lc = document.getElementById('login-fiber-canvas');
+    if(lc) lc.style.opacity = dark ? '0' : '0.22';
+  }
+
+  btn.addEventListener('click', function(){ dark = !dark; applyTheme(); });
+
+  // Dark BG canvas (mirrors main initBG but on #bg-canvas-cli)
+  document.addEventListener('DOMContentLoaded', function(){
+    if(!bgCli) return;
+    const ctx = bgCli.getContext('2d');
+    let W, H;
+    function resize(){ W = bgCli.width = window.innerWidth; H = bgCli.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    const COLS = [['0,85,229','0,200,240'],['100,60,255','0,180,255'],['0,60,200','0,220,255']];
+    function mkF(){
+      const fl = Math.random() > .45;
+      const [c1,c2] = COLS[Math.floor(Math.random()*COLS.length)];
+      const spd = .25 + Math.random()*.7, len = 180 + Math.random()*260, cv = (Math.random()-.5)*120;
+      return fl
+        ? {x:-len-50, y:Math.random()*H, dx:spd, dy:(Math.random()-.5)*.3, len,cv,c1,c2, w:.6+Math.random()*1.4, a:.25+Math.random()*.45, p:Math.random()*Math.PI*2, fl:true}
+        : {x:Math.random()*W, y:-len-50, dx:(Math.random()-.5)*.3, dy:spd, len,cv,c1,c2, w:.6+Math.random()*1.4, a:.25+Math.random()*.45, p:Math.random()*Math.PI*2, fl:false};
+    }
+    function mkN(){ return {x:Math.random()*W, y:Math.random()*H, r:.8+Math.random()*2.2, a:.1+Math.random()*.4, p:Math.random()*Math.PI*2, sp:.008+Math.random()*.022, col:Math.random()>.5?'0,200,240':'80,140,255'}; }
+    let fibers = Array.from({length:24}, mkF), nodes = Array.from({length:36}, mkN);
+    function drawF(f){
+      const tX=f.fl?f.x-f.len:f.x+f.cv, tY=f.fl?f.y+f.cv:f.y-f.len;
+      const cX=f.fl?f.x-f.len*.5+f.cv:f.x+f.cv*.5, cY=f.fl?f.y+f.cv*.5:f.y-f.len*.5;
+      const a2=f.a*(.65+.35*Math.sin(f.p));
+      const g=ctx.createLinearGradient(f.x,f.y,tX,tY);
+      g.addColorStop(0,`rgba(${f.c2},${a2})`); g.addColorStop(.5,`rgba(${f.c1},${a2*.75})`); g.addColorStop(1,`rgba(${f.c1},0)`);
+      ctx.beginPath(); ctx.moveTo(f.x,f.y); ctx.quadraticCurveTo(cX,cY,tX,tY); ctx.strokeStyle=g; ctx.lineWidth=f.w; ctx.stroke();
+      const tg=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,f.w*3);
+      tg.addColorStop(0,`rgba(${f.c2},${Math.min(a2*1.3,1)})`); tg.addColorStop(1,`rgba(${f.c2},0)`);
+      ctx.beginPath(); ctx.arc(f.x,f.y,f.w*3,0,Math.PI*2); ctx.fillStyle=tg; ctx.fill();
+    }
+    function tick(){
+      ctx.clearRect(0,0,W,H);
+      nodes.forEach(n=>{ n.p+=n.sp; const a=n.a*(.5+.5*Math.sin(n.p)); const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*4); g.addColorStop(0,`rgba(${n.col},${a})`); g.addColorStop(1,`rgba(${n.col},0)`); ctx.beginPath(); ctx.arc(n.x,n.y,n.r*4,0,Math.PI*2); ctx.fillStyle=g; ctx.fill(); });
+      fibers.forEach((f,i)=>{ f.p+=.018; f.x+=f.dx; f.y+=f.dy; const oob=f.fl?f.x>W+f.len+100:f.y>H+f.len+100; if(oob) fibers[i]=mkF(); else drawF(f); });
+      requestAnimationFrame(tick);
+    }
+    tick();
+  });
+})();
+
+// ── Contact Support modal ──
+function openContactModal(){
+  const APP = JSON.parse(sessionStorage.getItem('oftix_v3')||'{}');
+  const cd = APP.client_data || {};
+  const branches = APP.branches || [];
+  const user = APP.current_user || {};
+  let branch = null;
+  if(user.branch_id) branch = branches.find(b => b.id === user.branch_id);
+  if(!branch && cd.branch) branch = branches.find(b => b.name === cd.branch);
+  if(!branch) branch = branches[0] || {name:'Oftix Network',gcash:'09171234567',address:'Metro Manila'};
+
+  const el = id => document.getElementById(id);
+  if(el('contact-branch-name')) el('contact-branch-name').textContent = branch.name || 'Oftix Network';
+  if(el('contact-branch-addr')) el('contact-branch-addr').textContent = branch.address || 'Metro Manila';
+  if(el('contact-gcash'))       el('contact-gcash').textContent = branch.gcash || '09171234567';
+
+  openModal('contact-modal');
+}
+window.openContactModal = openContactModal;
+</script>
+</body>
+</html>

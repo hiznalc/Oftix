@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 210" width="560" height="210" style="display:block;overflow:visible">
+<defs>
+  <style>
+    /* ── Arc animations ── */
+    .a1{stroke-dasharray:380;stroke-dashoffset:380;animation:aIn .7s .08s cubic-bezier(.4,0,.2,1) both,p1 3.5s 1.2s ease-in-out infinite}
+    .a2{stroke-dasharray:290;stroke-dashoffset:290;animation:aIn .65s .22s cubic-bezier(.4,0,.2,1) both,p2 3.5s 1.2s ease-in-out infinite}
+    .a3{stroke-dasharray:195;stroke-dashoffset:195;animation:aIn .60s .38s cubic-bezier(.4,0,.2,1) both,p3 3.5s 1.2s ease-in-out infinite}
+    .a4{stroke-dasharray:380;stroke-dashoffset:380;animation:aIn .7s .15s cubic-bezier(.4,0,.2,1) both,p1 3.5s 1.2s ease-in-out infinite}
+    .a5{stroke-dasharray:290;stroke-dashoffset:290;animation:aIn .65s .30s cubic-bezier(.4,0,.2,1) both,p2 3.5s 1.2s ease-in-out infinite}
+    .a6{stroke-dasharray:195;stroke-dashoffset:195;animation:aIn .60s .38s cubic-bezier(.4,0,.2,1) both,p3 3.5s 1.2s ease-in-out infinite}
+    @keyframes aIn{to{stroke-dashoffset:0}}
+    @keyframes p1{0%,100%{opacity:.40}50%{opacity:.65}}
+    @keyframes p2{0%,100%{opacity:.58}50%{opacity:.80}}
+    @keyframes p3{0%,100%{opacity:.72}50%{opacity:.95}}
+
+    /* ── Tower structure ── */
+    .ms {stroke-dasharray:230;stroke-dashoffset:230;animation:tIn .5s .50s ease both}
+    .b1 {stroke-dasharray:80; stroke-dashoffset:80; animation:tIn .3s .72s ease both}
+    .b2 {stroke-dasharray:80; stroke-dashoffset:80; animation:tIn .3s .78s ease both}
+    .bb {stroke-dasharray:90; stroke-dashoffset:90; animation:tIn .3s .84s ease both}
+    .br {stroke-dasharray:55; stroke-dashoffset:55; animation:tIn .25s .64s ease both}
+    @keyframes tIn{to{stroke-dashoffset:0}}
+
+    /* ── Top dot ── */
+    .td{opacity:0;transform-origin:280px 14px;animation:dIn .4s .58s ease both,dP 2.4s 1.0s ease-in-out infinite}
+    @keyframes dIn{0%{opacity:0;transform:scale(0)}80%{transform:scale(1.4)}100%{opacity:1;transform:scale(1)}}
+    @keyframes dP{0%,100%{filter:drop-shadow(0 0 5px rgba(0,220,255,.6))}50%{filter:drop-shadow(0 0 20px rgba(0,240,255,1))}}
+
+    /* ── Letters ── */
+    .lO {opacity:0;animation:lIn .4s .68s ease both}
+    .lF {opacity:0;animation:lIn .4s .80s ease both}
+    .lT {opacity:0;animation:lIn .4s .92s ease both,tG 2.8s 1.3s ease-in-out infinite}
+    .li {opacity:0;animation:lIn .4s 1.04s ease both}
+    .lX {opacity:0;animation:lIn .4s 1.16s ease both,xG 3.2s 1.6s ease-in-out infinite}
+    .ls {opacity:0;animation:lIn .4s 1.30s ease both}
+    @keyframes lIn{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+    @keyframes tG{0%,100%{filter:drop-shadow(0 0 3px rgba(0,215,255,.25))}50%{filter:drop-shadow(0 0 9px rgba(0,235,255,.60))}}
+    @keyframes xG{0%,100%{filter:drop-shadow(0 0 3px rgba(0,205,255,.20))}50%{filter:brightness(1.12) drop-shadow(0 0 8px rgba(0,235,255,.50))}}
+  </style>
+
+  <!-- Tower gradient – blue → cyan -->
+  <linearGradient id="tg" x1="0%" y1="0%" x2="80%" y2="100%">
+    <stop offset="0%"   stop-color="#3377ff"/>
+    <stop offset="100%" stop-color="#00ccff"/>
+  </linearGradient>
+  <!-- Mast gradient – top bright, fades down -->
+  <linearGradient id="mg" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%"   stop-color="#00eeff"/>
+    <stop offset="55%"  stop-color="#2266ee"/>
+    <stop offset="100%" stop-color="#1144aa"/>
+  </linearGradient>
+
+  <!-- O F – bold blue -->
+  <linearGradient id="gOF" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%"   stop-color="#4488ff"/>
+    <stop offset="100%" stop-color="#1144dd"/>
+  </linearGradient>
+  <!-- T i X – bright cyan -->
+  <linearGradient id="gTX" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%"   stop-color="#00f5ff"/>
+    <stop offset="100%" stop-color="#00aacc"/>
+  </linearGradient>
+  <!-- Subtitle -->
+  <linearGradient id="gs" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%"   stop-color="#6699bb"/>
+    <stop offset="100%" stop-color="#44aacc"/>
+  </linearGradient>
+
+  <!-- Soft arc glow (tower only) -->
+  <filter id="farc" x="-25%" y="-25%" width="150%" height="150%">
+    <feGaussianBlur stdDeviation="2.2" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <!-- Crisp letter render (minimal) -->
+  <filter id="fl" x="-5%" y="-5%" width="110%" height="110%">
+    <feGaussianBlur stdDeviation="0.4" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<!-- ═══════════════════════════════════════════════════
+     LAYER 1 — BROADCAST TOWER (behind everything)
+     Tower mast centered at x=280
+     Arcs spread wide left/right, occupying full width
+     Base legs go below the text baseline
+═══════════════════════════════════════════════════ -->
+
+<!-- Outer arcs (wide, faint) -->
+<path class="a1" d="M 176,122 A 108,108 0 0,1 176,4"  fill="none" stroke="url(#tg)" stroke-width="2.0" stroke-linecap="round" opacity=".40"/>
+<path class="a4" d="M 384,122 A 108,108 0 0,0 384,4"  fill="none" stroke="url(#tg)" stroke-width="2.0" stroke-linecap="round" opacity=".40"/>
+
+<!-- Mid arcs -->
+<path class="a2" d="M 202,112 A 82,82 0 0,1 202,12"   fill="none" stroke="url(#tg)" stroke-width="2.6" stroke-linecap="round" opacity=".58"/>
+<path class="a5" d="M 358,112 A 82,82 0 0,0 358,12"   fill="none" stroke="url(#tg)" stroke-width="2.6" stroke-linecap="round" opacity=".58"/>
+
+<!-- Inner arcs (brightest, glowing) -->
+<path class="a3" d="M 230,100 A 54,54 0 0,1 230,22"   fill="none" stroke="url(#tg)" stroke-width="3.4" stroke-linecap="round" opacity=".75" filter="url(#farc)"/>
+<path class="a6" d="M 330,100 A 54,54 0 0,0 330,22"   fill="none" stroke="url(#tg)" stroke-width="3.4" stroke-linecap="round" opacity=".75" filter="url(#farc)"/>
+
+<!-- Tower mast — tall, runs from top to below text -->
+<line class="ms" x1="280" y1="14"  x2="280" y2="182" stroke="url(#mg)" stroke-width="4.5" stroke-linecap="round" opacity=".70"/>
+
+<!-- Cross braces -->
+<line class="br" x1="260" y1="110" x2="300" y2="110" stroke="url(#tg)" stroke-width="2.2" stroke-linecap="round" opacity=".55"/>
+<line class="br" x1="264" y1="130" x2="296" y2="130" stroke="url(#tg)" stroke-width="1.8" stroke-linecap="round" opacity=".45"/>
+<line class="br" x1="268" y1="150" x2="292" y2="150" stroke="url(#tg)" stroke-width="1.5" stroke-linecap="round" opacity=".35"/>
+
+<!-- Base legs -->
+<line class="b1" x1="280" y1="182" x2="252" y2="200" stroke="url(#mg)" stroke-width="4.0" stroke-linecap="round" opacity=".65"/>
+<line class="b2" x1="280" y1="182" x2="308" y2="200" stroke="url(#mg)" stroke-width="4.0" stroke-linecap="round" opacity=".65"/>
+<line class="bb" x1="246" y1="200" x2="314" y2="200" stroke="url(#mg)" stroke-width="2.8" stroke-linecap="round" opacity=".48"/>
+
+<!-- Top signal dot (animated glow) -->
+<g class="td">
+  <circle cx="280" cy="14" r="9"   fill="url(#tg)"  filter="url(#farc)" opacity=".75"/>
+  <circle cx="280" cy="14" r="5"   fill="#00eeff"   filter="url(#farc)" opacity=".90"/>
+  <circle cx="280" cy="14" r="2.4" fill="white"                          opacity=".98"/>
+</g>
+
+<!-- ═══════════════════════════════════════════════════
+     LAYER 2 — WORDMARK on top (fully visible, no blur)
+     OFTiX centered at x=280 of 560-wide canvas
+     font-size 100, text block ~460px wide → start x=50
+═══════════════════════════════════════════════════ -->
+
+<!-- O -->
+<text class="lO" x="109" y="155"
+  font-family="'Arial Black','Arial Bold',Arial,Impact,sans-serif"
+  font-size="100" font-weight="900"
+  fill="url(#gOF)">O</text>
+
+<!-- F -->
+<text class="lF" x="189" y="155"
+  font-family="'Arial Black','Arial Bold',Arial,Impact,sans-serif"
+  font-size="100" font-weight="900"
+  fill="url(#gOF)">F</text>
+
+<!-- T -->
+<text class="lT" x="259" y="155"
+  font-family="'Arial Black','Arial Bold',Arial,Impact,sans-serif"
+  font-size="100" font-weight="900"
+  fill="url(#gTX)">T</text>
+
+<!-- i -->
+<text class="li" x="333" y="155"
+  font-family="'Arial Black','Arial Bold',Arial,Impact,sans-serif"
+  font-size="100" font-weight="900" font-style="italic"
+  fill="url(#gTX)">i</text>
+<!-- i accent bar -->
+<rect class="li" x="332" y="38" width="28" height="8" rx="4"
+  fill="#00ffee" opacity=".95"/>
+<rect class="li" x="336" y="40" width="20" height="4" rx="2"
+  fill="white"   opacity=".80"/>
+
+<!-- X -->
+<text class="lX" x="379" y="155"
+  font-family="'Arial Black','Arial Bold',Arial,Impact,sans-serif"
+  font-size="100" font-weight="900"
+  fill="url(#gTX)">X</text>
+
+<!-- Network Inc. -->
+<text class="ls" x="280" y="182"
+  font-family="Arial,'Helvetica Neue',Helvetica,sans-serif"
+  font-size="17" font-weight="600" letter-spacing="4"
+  fill="url(#gs)" text-anchor="middle" opacity=".88">Network Inc.</text>
+
+</svg>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oftix Network — Super Admin</title>
+  <link rel="stylesheet" href="/assets/css/styles.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="bg-canvas-wrap"><canvas id="bg-canvas"></canvas></div>
+<div id="toast-container"></div>
+
+<div class="adm-wrap">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="adm-sidebar">
+    <div class="adm-sidebar-logo">
+      <img src="/assets/images/oftix-logo-anim.svg" alt="Oftix Network Inc." style="width:100%;max-width:220px;height:auto;object-fit:contain;display:block"
+        onerror="this.outerHTML='<span style=font-family:Orbitron,sans-serif;font-size:1rem;font-weight:900;color:#00c8f0>OFTiX</span>'"/>
+      <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,100,255,.15)">
+        <div class="adm-logo-sub">Super Admin</div>
+      </div>
+    </div>
+    <nav class="adm-nav">
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em">Overview</div>
+      <div class="adm-nav-item active" data-sec="dashboard"><span class="n-icon">📊</span><span class="n-label">Dashboard</span></div>
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px">Management</div>
+      <div class="adm-nav-item" data-sec="branches"><span class="n-icon">🏢</span><span class="n-label">Branches</span></div>
+      <div class="adm-nav-item" data-sec="admins"><span class="n-icon">👤</span><span class="n-label">Branch Admins</span></div>
+      <div class="adm-nav-item" data-sec="clients"><span class="n-icon">👥</span><span class="n-label">All Clients</span></div>
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px">Finance</div>
+      <div class="adm-nav-item" data-sec="payments"><span class="n-icon">💰</span><span class="n-label">All Payments</span></div>
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px">Support</div>
+      <div class="adm-nav-item" data-sec="tickets"><span class="n-icon">🎫</span><span class="n-label">All Tickets</span></div>
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px">Analytics</div>
+      <div class="adm-nav-item" data-sec="reports"><span class="n-icon">📈</span><span class="n-label">Reports</span></div>
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px">System</div>
+      <div class="adm-nav-item" data-sec="backup"><span class="n-icon">💾</span><span class="n-label">System Backup</span></div>
+      <div class="adm-nav-item" data-sec="settings"><span class="n-icon">⚙️</span><span class="n-label">Settings</span></div>
+    </nav>
+    <div class="adm-sidebar-ft">
+      <div class="user-chip" style="margin-bottom:12px">
+        <div class="u-avatar" id="u-avatar-disp">A</div>
+        <div><div class="u-name" id="u-name-disp">Super Admin</div><div class="u-role" id="u-role-disp">Super Admin</div></div>
+      </div>
+      <button class="btn btn-outline-dk btn-full" id="logout-btn" style="font-size:.82rem">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="adm-main">
+    <header class="adm-topbar">
+      <div class="adm-topbar-l">
+        <div class="hamburger adm"><span></span><span></span><span></span></div>
+        <span class="adm-page-title" id="adm-page-title">Dashboard</span>
+      </div>
+      <div class="adm-topbar-r">
+        <div style="font-size:.78rem;color:var(--adm-muted);padding:5px 12px;background:rgba(0,200,80,.10);border-radius:20px;border:1px solid rgba(0,200,80,.25)"><span class="dot dot-on"></span>All Systems Online</div>
+        <div class="user-chip">
+          <div class="u-avatar" style="width:30px;height:30px;font-size:.8rem">A</div>
+          <span style="font-size:.82rem;color:var(--adm-muted)">Super Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+
+      <!-- DASHBOARD -->
+      <div class="adm-sec active" id="adm-sec-dashboard">
+        <div class="adm-sec-hdr">
+          <div><div class="adm-sec-title">System Dashboard</div><div class="adm-sec-sub">Real-time operations overview</div></div>
+          <span style="font-size:.8rem;color:var(--adm-muted);background:rgba(0,100,255,.10);padding:6px 14px;border-radius:8px;border:1px solid var(--adm-border)">📅 March 23, 2026</span>
+        </div>
+        <div class="adm-stats">
+          <div class="adm-stat"><span class="adm-stat-icon">👥</span><div class="adm-stat-val" id="stat-clients">88</div><div class="adm-stat-lbl">Total Clients</div><div class="adm-stat-trend">↑ +4 this month</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">💰</span><div class="adm-stat-val" id="stat-income">₱74,000</div><div class="adm-stat-lbl">Monthly Revenue</div><div class="adm-stat-trend">↑ +10.4% vs last month</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">🏢</span><div class="adm-stat-val" id="stat-branches">4</div><div class="adm-stat-lbl">Active Branches</div><div class="adm-stat-trend">Metro Manila</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">👤</span><div class="adm-stat-val" id="stat-admins">4</div><div class="adm-stat-lbl">Branch Admins</div><div class="adm-stat-trend">All active</div></div>
+        </div>
+        <div class="adm-g2">
+          <div class="adm-chart"><div class="adm-chart-title">📈 Monthly Revenue (Oct–Mar)</div><canvas id="income-chart" height="200"></canvas></div>
+          <div class="adm-chart"><div class="adm-chart-title">🍩 Clients per Branch</div><canvas id="client-chart" height="200"></canvas></div>
+        </div>
+        <div class="adm-panel">
+          <div class="adm-panel-hdr">⚡ Recent Activity</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(0,100,255,.07);border-radius:8px"><span>✅</span><div><div style="font-size:.88rem;font-weight:600">New client — <strong>Carlo Mendoza</strong> (QC Branch)</div><div style="font-size:.75rem;color:var(--adm-muted)">2 hours ago</div></div></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(0,200,80,.07);border-radius:8px"><span>💰</span><div><div style="font-size:.88rem;font-weight:600">Payment verified — <strong>₱2,999</strong> from Sofia Tan</div><div style="font-size:.75rem;color:var(--adm-muted)">5 hours ago</div></div></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,152,0,.07);border-radius:8px"><span>🎫</span><div><div style="font-size:.88rem;font-weight:600">Ticket opened — <strong>Slow connection</strong> (QC Branch)</div><div style="font-size:.75rem;color:var(--adm-muted)">1 day ago</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRANCHES -->
+      <div class="adm-sec" id="adm-sec-branches">
+        <div class="adm-sec-hdr">
+          <div><div class="adm-sec-title">Branch Management</div><div class="adm-sec-sub">Manage all Oftix branches</div></div>
+          <button class="btn btn-primary-dk" onclick="openModal('add-branch-modal')">＋ Add Branch</button>
+        </div>
+        <div class="adm-tbl-wrap">
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">🏢 All Branches</span><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search branch…"/></div></div>
+          <table><thead><tr><th>Branch Name</th><th>Address</th><th>GCash #</th><th>Clients</th><th>Status</th><th>Actions</th></tr></thead><tbody id="branches-tbody"></tbody></table>
+        </div>
+        <div class="adm-g2">
+          <div class="adm-panel"><div class="adm-panel-hdr">📊 Revenue Comparison</div><canvas id="branch-rev-chart" height="200"></canvas></div>
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">📍 Quick Stats</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;padding:11px 14px;background:rgba(0,100,255,.08);border-radius:8px;align-items:center"><span style="font-size:.87rem">Total Active Branches</span><span style="font-family:'Orbitron',sans-serif;font-weight:700;color:var(--accent)">4</span></div>
+              <div style="display:flex;justify-content:space-between;padding:11px 14px;background:rgba(0,200,80,.08);border-radius:8px;align-items:center"><span style="font-size:.87rem">Total Network Clients</span><span style="font-family:'Orbitron',sans-serif;font-weight:700;color:var(--success)">88</span></div>
+              <div style="display:flex;justify-content:space-between;padding:11px 14px;background:rgba(0,200,240,.08);border-radius:8px;align-items:center"><span style="font-size:.87rem">Highest Revenue</span><span style="font-size:.87rem;font-weight:700;color:var(--accent)">Makati · ₱46,469</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRANCH ADMINS -->
+      <div class="adm-sec" id="adm-sec-admins">
+        <div class="adm-sec-hdr">
+          <div><div class="adm-sec-title">Branch Admins</div><div class="adm-sec-sub">Manage staff accounts</div></div>
+          <button class="btn btn-primary-dk" onclick="openModal('add-admin-modal')">＋ Add Admin</button>
+        </div>
+        <div class="adm-tbl-wrap">
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">👤 Staff Accounts</span><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search admin…"/></div></div>
+          <table><thead><tr><th>Name</th><th>Username</th><th>Branch</th><th>Status</th><th>Actions</th></tr></thead><tbody id="admins-tbody"></tbody></table>
+        </div>
+        <div class="alert al-info-dk">💡 Branch admins can only access their assigned branch data.</div>
+      </div>
+
+      <!-- ALL CLIENTS -->
+      <div class="adm-sec" id="adm-sec-clients">
+        <div class="adm-sec-hdr">
+          <div><div class="adm-sec-title">All Clients</div><div class="adm-sec-sub">Network-wide subscriber list</div></div>
+          <div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search client…"/></div>
+        </div>
+        <div class="adm-tbl-wrap">
+          <table><thead><tr><th>Name</th><th>Plan</th><th>Branch</th><th>Status</th><th>Payment</th><th>Install Date</th><th>Due Date</th></tr></thead>
+          <tbody id="all-clients-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ALL PAYMENTS -->
+      <div class="adm-sec" id="adm-sec-payments">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">All Payments</div><div class="adm-sec-sub">Network-wide payment records</div></div></div>
+        <div class="adm-stats" style="grid-template-columns:repeat(3,1fr)">
+          <div class="adm-stat"><span class="adm-stat-icon">✅</span><div class="adm-stat-val">₱4,498</div><div class="adm-stat-lbl">Verified Revenue</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">⏳</span><div class="adm-stat-val">₱1,999</div><div class="adm-stat-lbl">Pending Verification</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">📋</span><div class="adm-stat-val">3</div><div class="adm-stat-lbl">Total Transactions</div></div>
+        </div>
+        <div class="adm-tbl-wrap">
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">💰 Payment Records</span></div>
+          <table><thead><tr><th>Client</th><th>Branch</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th><th>Receipt</th></tr></thead>
+          <tbody id="all-payments-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ALL TICKETS -->
+      <div class="adm-sec" id="adm-sec-tickets">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">All Tickets</div><div class="adm-sec-sub">Monitor issues across all branches</div></div></div>
+        <div class="adm-stats" style="grid-template-columns:repeat(3,1fr)">
+          <div class="adm-stat"><span class="adm-stat-icon">📬</span><div class="adm-stat-val">1</div><div class="adm-stat-lbl">Open Tickets</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">✅</span><div class="adm-stat-val">1</div><div class="adm-stat-lbl">Resolved</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">⏱️</span><div class="adm-stat-val">&lt;24h</div><div class="adm-stat-lbl">Avg Response Time</div></div>
+        </div>
+        <div class="adm-tbl-wrap">
+          <table><thead><tr><th>Client</th><th>Branch</th><th>Subject</th><th>Date</th><th>Status</th><th>Response</th></tr></thead>
+          <tbody id="all-tickets-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="adm-sec" id="adm-sec-reports">
+        <div class="adm-sec-hdr">
+          <div><div class="adm-sec-title">Reports &amp; Analytics</div><div class="adm-sec-sub">Performance and financial insights</div></div>
+          <button class="btn btn-outline-dk" onclick="toast('Report exported! 📥','success')">📥 Export PDF</button>
+        </div>
+        <div class="adm-stats">
+          <div class="adm-stat"><span class="adm-stat-icon">💵</span><div class="adm-stat-val">₱74,000</div><div class="adm-stat-lbl">March Revenue</div><div class="adm-stat-trend">↑ +10.4%</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">👥</span><div class="adm-stat-val">88</div><div class="adm-stat-lbl">Total Subscribers</div><div class="adm-stat-trend">↑ +4 new</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">📡</span><div class="adm-stat-val">99.9%</div><div class="adm-stat-lbl">Uptime SLA</div><div class="adm-stat-trend">All branches</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">⭐</span><div class="adm-stat-val">4.8</div><div class="adm-stat-lbl">Customer Rating</div><div class="adm-stat-trend">Out of 5.0</div></div>
+        </div>
+        <div class="adm-g2">
+          <div class="adm-chart"><div class="adm-chart-title">💰 Revenue by Branch</div><canvas id="branch-rev-chart2" height="200"></canvas></div>
+          <div class="adm-chart"><div class="adm-chart-title">📡 Plan Distribution</div><canvas id="plans-chart" height="200"></canvas></div>
+        </div>
+        <div class="adm-panel">
+          <div class="adm-panel-hdr">📋 Monthly Summary — March 2026</div>
+          <table><thead><tr><th>Branch</th><th>New Clients</th><th>Revenue</th><th>Tickets</th><th>Uptime</th></tr></thead>
+          <tbody>
+            <tr><td>Quezon City</td><td>2</td><td>₱35,976</td><td>1 open</td><td><span class="badge badge-success">99.9%</span></td></tr>
+            <tr><td>Manila</td><td>1</td><td>₱27,982</td><td>0</td><td><span class="badge badge-success">100%</span></td></tr>
+            <tr><td>Makati</td><td>0</td><td>₱46,469</td><td>0</td><td><span class="badge badge-success">99.8%</span></td></tr>
+            <tr><td>Pasig</td><td>1</td><td>₱22,485</td><td>1 resolved</td><td><span class="badge badge-success">99.9%</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- BACKUP -->
+      <div class="adm-sec" id="adm-sec-backup">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">System Backup</div><div class="adm-sec-sub">Data backup and recovery management</div></div></div>
+        <div class="adm-g2">
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">💾 Backup Controls</div>
+            <div style="text-align:center;padding:24px 0">
+              <div style="font-size:4rem;margin-bottom:16px;animation:float 4s ease-in-out infinite">💾</div>
+              <div style="font-size:.87rem;color:var(--adm-muted);margin-bottom:6px" id="last-backup-txt">Last backup: March 22, 2026 · 11:00 PM</div>
+              <div style="font-size:.78rem;color:var(--adm-dim);margin-bottom:24px">Includes: Client data, payments, system configuration</div>
+              <button class="btn btn-primary-dk" id="backup-btn" onclick="backupSystem()" style="padding:14px 36px;font-size:.95rem">💾 Run Backup Now</button>
+            </div>
+            <div class="divider-dk"></div>
+            <div style="font-size:.8rem;color:var(--adm-muted)">
+              <div style="margin-bottom:8px">✅ Auto-backup: Daily at 12:00 AM</div>
+              <div style="margin-bottom:8px">✅ Encrypted cloud storage</div>
+              <div>✅ 30-day rolling retention</div>
+            </div>
+          </div>
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">📋 Backup History</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;padding:12px 14px;background:rgba(0,200,80,.08);border-radius:8px;align-items:center"><div><div style="font-size:.87rem;font-weight:600">March 22, 2026 — 11:00 PM</div><div style="font-size:.74rem;color:var(--adm-muted)">Auto backup · 12.4 MB</div></div><span class="badge badge-success">Success</span></div>
+              <div style="display:flex;justify-content:space-between;padding:12px 14px;background:rgba(0,200,80,.08);border-radius:8px;align-items:center"><div><div style="font-size:.87rem;font-weight:600">March 21, 2026 — 11:00 PM</div><div style="font-size:.74rem;color:var(--adm-muted)">Auto backup · 12.2 MB</div></div><span class="badge badge-success">Success</span></div>
+              <div style="display:flex;justify-content:space-between;padding:12px 14px;background:rgba(0,200,80,.08);border-radius:8px;align-items:center"><div><div style="font-size:.87rem;font-weight:600">March 20, 2026 — 11:00 PM</div><div style="font-size:.74rem;color:var(--adm-muted)">Auto backup · 11.9 MB</div></div><span class="badge badge-success">Success</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="adm-sec" id="adm-sec-settings">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">System Settings</div><div class="adm-sec-sub">Admin credentials and security</div></div></div>
+        <div class="adm-g2">
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">🔒 Admin Password</div>
+            <div class="fg"><label class="fl">Current Password</label><input type="password" class="inp-dk" placeholder="Enter current password"/></div>
+            <div class="fg"><label class="fl">New Password</label><input type="password" class="inp-dk" placeholder="Enter new password"/></div>
+            <div class="fg"><label class="fl">Confirm Password</label><input type="password" class="inp-dk" placeholder="Confirm new password"/></div>
+            <button class="btn btn-primary-dk" onclick="toast('Password updated! 🔒','success')">🔒 Update Password</button>
+          </div>
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">🔑 Security PIN</div>
+            <p style="font-size:.85rem;color:var(--adm-muted);margin-bottom:18px;line-height:1.65">This PIN is required for staff to access the admin login. Change it regularly.</p>
+            <div class="fg"><label class="fl">New Security PIN (3 digits)</label><input type="text" class="inp-dk" id="new-pin-inp" placeholder="Enter new PIN" maxlength="3" inputmode="numeric"/></div>
+            <div class="fg"><label class="fl">Confirm PIN</label><input type="text" class="inp-dk" placeholder="Confirm new PIN" maxlength="3" inputmode="numeric"/></div>
+            <button class="btn btn-primary-dk" onclick="changePin()">🔑 Change Security PIN</button>
+            <div class="alert al-warning-dk" style="margin-top:16px;font-size:.8rem">⚠️ After changing, inform all branch admins of the new PIN.</div>
+          </div>
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">🌐 System Information</div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(0,100,255,.07);border-radius:8px"><span style="font-size:.84rem;color:var(--adm-muted)">System Version</span><span style="font-size:.84rem;font-weight:700">Oftix v3.0.0</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(0,100,255,.07);border-radius:8px"><span style="font-size:.84rem;color:var(--adm-muted)">Last Updated</span><span style="font-size:.84rem;font-weight:700">March 23, 2026</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(0,100,255,.07);border-radius:8px"><span style="font-size:.84rem;color:var(--adm-muted)">Active Branches</span><span style="font-size:.84rem;font-weight:700;color:var(--success)">4 Online</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(0,100,255,.07);border-radius:8px"><span style="font-size:.84rem;color:var(--adm-muted)">Total Subscribers</span><span style="font-size:.84rem;font-weight:700">88 Accounts</span></div>
+            </div>
+          </div>
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">🚀 Quick Actions</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-outline-dk btn-full" onclick="openModal('add-branch-modal')">🏢 Add New Branch</button>
+              <button class="btn btn-outline-dk btn-full" onclick="openModal('add-admin-modal')">👤 Add Branch Admin</button>
+              <button class="btn btn-outline-dk btn-full" onclick="backupSystem()">💾 Run System Backup</button>
+              <button class="btn btn-outline-dk btn-full" onclick="toast('Report generated! 📊','success')">📊 Generate Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /adm-scroll -->
+  </div>
+</div>
+
+<!-- ADD BRANCH MODAL -->
+<div class="modal-overlay" id="add-branch-modal" style="display:none">
+  <div class="modal-dk">
+    <div class="modal-hdr"><h3 class="modal-hdr-title">🏢 Add New Branch</h3><button class="modal-close" onclick="closeModal('add-branch-modal')">×</button></div>
+    <div class="fg"><label class="fl">Branch Name</label><input type="text" class="inp-dk" id="new-branch-name" placeholder="e.g. Oftix Caloocan"/></div>
+    <div class="fg"><label class="fl">Address</label><input type="text" class="inp-dk" id="new-branch-address" placeholder="City, Metro Manila"/></div>
+    <div class="fg"><label class="fl">GCash Number</label><input type="text" class="inp-dk" id="new-branch-gcash" placeholder="09XX-XXX-XXXX"/></div>
+    <button class="btn btn-primary-dk btn-full" onclick="addBranch()">✅ Add Branch</button>
+  </div>
+</div>
+
+<!-- ADD ADMIN MODAL -->
+<div class="modal-overlay" id="add-admin-modal" style="display:none">
+  <div class="modal-dk">
+    <div class="modal-hdr"><h3 class="modal-hdr-title">👤 Add Branch Admin</h3><button class="modal-close" onclick="closeModal('add-admin-modal')">×</button></div>
+    <div class="fg"><label class="fl">Full Name</label><input type="text" class="inp-dk" id="new-admin-name" placeholder="Admin full name"/></div>
+    <div class="fg"><label class="fl">Username</label><input type="text" class="inp-dk" id="new-admin-user" placeholder="admin_username"/></div>
+    <div class="fg"><label class="fl">Password</label><input type="password" class="inp-dk" id="new-admin-pass" placeholder="Set password"/></div>
+    <div class="fg"><label class="fl">Assign Branch</label><select class="inp-dk" id="new-admin-branch"><option value="" disabled selected>— Select branch —</option></select></div>
+    <button class="btn btn-primary-dk btn-full" onclick="addAdmin()">✅ Create Admin Account</button>
+  </div>
+</div>
+
+<script src="/assets/js/script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const st = JSON.parse(sessionStorage.getItem('oftix_v3')||'{}');
+  const branches = st.branches||[];
+  const clients  = st.clients||[];
+  const payments = st.payments||[];
+  const tickets  = st.tickets||[];
+
+  // All clients table
+  const actb = document.getElementById('all-clients-tbody');
+  if(actb) actb.innerHTML = clients.map(c=>{
+    const br = branches.find(b=>b.id===c.branch_id);
+    return `<tr><td>${c.name}</td><td>${c.plan}</td><td>${br?.name||'—'}</td>
+      <td><span class="badge badge-${c.status==='active'?'success':'warning'}">${c.status}</span></td>
+      <td><span class="badge badge-${c.payment_status==='paid'?'success':c.payment_status==='pending'?'warning':'danger'}">${c.payment_status}</span></td>
+      <td>${c.install_date||'Pending'}</td><td>${c.due_date||'—'}</td></tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--adm-muted);padding:28px">No clients found</td></tr>';
+
+  // All payments table
+  const aptb = document.getElementById('all-payments-tbody');
+  if(aptb) aptb.innerHTML = payments.map(p=>{
+    const br = branches.find(b=>b.id===p.branch_id);
+    return `<tr><td>${p.client}</td><td>${br?.name||'—'}</td><td>₱${p.amount.toLocaleString()}</td>
+      <td>${p.method}</td><td>${p.date}</td>
+      <td><span class="badge badge-${p.status==='verified'?'success':'warning'}">${p.status}</span></td>
+      <td>${p.receipt?'<span class="badge badge-info">Yes</span>':'<span class="badge badge-muted">No</span>'}</td></tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--adm-muted)">No payments</td></tr>';
+
+  // All tickets table
+  const attb = document.getElementById('all-tickets-tbody');
+  if(attb) attb.innerHTML = tickets.map(t=>{
+    const br = branches.find(b=>b.id===t.branch_id);
+    return `<tr><td>${t.client}</td><td>${br?.name||'—'}</td><td>${t.subject}</td>
+      <td>${t.date}</td>
+      <td><span class="badge badge-${t.status==='open'?'warning':'success'}">${t.status}</span></td>
+      <td style="font-size:.82rem;color:var(--adm-muted)">${t.response||'—'}</td></tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--adm-muted)">No tickets</td></tr>';
+
+  // Sync page title on nav clicks
+  document.querySelectorAll('.adm-nav-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      const lbl = item.querySelector('.n-label')?.textContent||'';
+      const t = document.getElementById('adm-page-title');
+      if(t) t.textContent=lbl;
+    });
+  });
+});
+</script>
+</body>
+</html>

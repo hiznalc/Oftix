@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oftix Network — Branch Admin</title>
+  <link rel="stylesheet" href="/assets/css/styles.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div id="bg-canvas-wrap"><canvas id="bg-canvas"></canvas></div>
+<div id="toast-container"></div>
+
+<div class="adm-wrap">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="adm-sidebar">
+    <div class="adm-sidebar-logo">
+      <img src="/assets/images/oftix-logo-anim.svg" alt="Oftix Network Inc." style="width:100%;max-width:220px;height:auto;object-fit:contain;display:block"
+        onerror="this.outerHTML='<span style=font-family:Orbitron,sans-serif;font-size:1rem;font-weight:900;color:#00c8f0>OFTiX</span>'"/>
+      <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,100,255,.15)">
+        <div class="adm-logo-sub">Branch Admin</div>
+        <div class="adm-logo-branch branch-name-disp" id="branch-name-disp">—</div>
+      </div>
+    </div>
+    <nav class="adm-nav">
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em">Dashboard</div>
+      <div class="adm-nav-item active" data-sec="overview"><span class="n-icon">📊</span><span class="n-label">Overview</span></div>
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px">Operations</div>
+      <div class="adm-nav-item" data-sec="applications"><span class="n-icon">📝</span><span class="n-label">Applications</span><span class="n-badge">3</span></div>
+      <div class="adm-nav-item" data-sec="clients"><span class="n-icon">👥</span><span class="n-label">Client List</span></div>
+      <div class="adm-nav-item" data-sec="payments"><span class="n-icon">💰</span><span class="n-label">Payments</span></div>
+      <div class="adm-nav-item" data-sec="tickets"><span class="n-icon">🎫</span><span class="n-label">Support Tickets</span></div>
+      <div class="adm-nav-item" data-sec="schedule"><span class="n-icon">📅</span><span class="n-label">Schedule</span></div>
+      <div class="adm-nav-item" data-sec="archive"><span class="n-icon">🗃️</span><span class="n-label">Archive</span></div>
+      <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px">Settings</div>
+      <div class="adm-nav-item" data-sec="settings"><span class="n-icon">⚙️</span><span class="n-label">Settings</span></div>
+    </nav>
+    <div class="adm-sidebar-ft">
+      <div class="user-chip" style="margin-bottom:12px">
+        <div class="u-avatar" id="u-avatar-disp">A</div>
+        <div><div class="u-name" id="u-name-disp">Branch Admin</div><div class="u-role" id="u-role-disp">Branch Admin</div></div>
+      </div>
+      <button class="btn btn-outline-dk btn-full" id="logout-btn" style="font-size:.82rem">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="adm-main">
+    <header class="adm-topbar">
+      <div class="adm-topbar-l">
+        <div class="hamburger adm"><span></span><span></span><span></span></div>
+        <span class="adm-page-title" id="adm-page-title">Overview</span>
+      </div>
+      <div class="adm-topbar-r">
+        <span style="font-size:.8rem;color:var(--accent);font-weight:600" id="topbar-branch">Branch</span>
+        <span style="font-size:.78rem;color:var(--adm-muted);padding:4px 10px;background:rgba(0,100,255,.10);border-radius:20px;border:1px solid var(--adm-border)"><span class="dot dot-on"></span>Online</span>
+      </div>
+    </header>
+
+    <div class="adm-scroll">
+
+      <!-- OVERVIEW -->
+      <div class="adm-sec active" id="adm-sec-overview">
+        <div class="adm-sec-hdr">
+          <div><div class="adm-sec-title">Branch Overview</div><div class="adm-sec-sub" id="overview-branch-sub">Branch Dashboard</div></div>
+          <span style="font-size:.8rem;color:var(--adm-muted)">📅 March 23, 2026</span>
+        </div>
+        <div class="adm-stats">
+          <div class="adm-stat"><span class="adm-stat-icon">📝</span><div class="adm-stat-val">3</div><div class="adm-stat-lbl">Pending Applications</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">👥</span><div class="adm-stat-val">24</div><div class="adm-stat-lbl">Total Clients</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">💰</span><div class="adm-stat-val">₱35,976</div><div class="adm-stat-lbl">Monthly Revenue</div></div>
+          <div class="adm-stat"><span class="adm-stat-icon">🎫</span><div class="adm-stat-val">1</div><div class="adm-stat-lbl">Open Tickets</div></div>
+        </div>
+        <div class="adm-panel">
+          <div class="adm-panel-hdr">📝 Recent Applications</div>
+          <table><thead><tr><th>Name</th><th>Plan</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Jerome Bautista</td><td>Fiber 50</td><td>2025-03-10</td><td><span class="badge badge-warning">Pending</span></td><td><button class="btn btn-success btn-sm" onclick="approveApp(1)">Approve</button></td></tr>
+            <tr><td>Gina Lopez</td><td>Fiber 100</td><td>2025-03-08</td><td><span class="badge badge-info">Approved</span></td><td><button class="btn btn-warning btn-sm" onclick="scheduleApp(2)">Schedule</button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- APPLICATIONS -->
+      <div class="adm-sec" id="adm-sec-applications">
+        <div class="adm-sec-hdr">
+          <div><div class="adm-sec-title">Applications</div><div class="adm-sec-sub">Pending → Approve → Schedule → Install → Client List</div></div>
+        </div>
+        <div class="alert al-info-dk" style="margin-bottom:18px">💡 Workflow: <strong>Pending → Approve → Schedule → Mark Installed</strong> — Client moves to client list automatically.</div>
+        <div class="adm-tbl-wrap">
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">📝 All Applications</span><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search applicant…"/></div></div>
+          <table><thead><tr><th>Name</th><th>Contact</th><th>Plan</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apps-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div class="adm-sec" id="adm-sec-clients">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">Client List</div><div class="adm-sec-sub">Active subscribers in this branch</div></div></div>
+        <div class="adm-tbl-wrap">
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">👥 Subscribers</span><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search client…"/></div></div>
+          <table><thead><tr><th>Name</th><th>Contact</th><th>Plan</th><th>Status</th><th>Payment</th><th>Install Date</th></tr></thead><tbody id="clients-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- PAYMENTS -->
+      <div class="adm-sec" id="adm-sec-payments">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">Payments</div><div class="adm-sec-sub">Verify client payments and receipts</div></div></div>
+        <div class="adm-tbl-wrap">
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">💰 Payment Records</span></div>
+          <table><thead><tr><th>Client</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th><th>Receipt</th><th>Action</th></tr></thead><tbody id="payments-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- TICKETS -->
+      <div class="adm-sec" id="adm-sec-tickets">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">Support Tickets</div><div class="adm-sec-sub">Respond to client issues</div></div></div>
+        <div class="adm-tbl-wrap">
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">🎫 Tickets</span></div>
+          <table><thead><tr><th>Client</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="tickets-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- SCHEDULE -->
+      <div class="adm-sec" id="adm-sec-schedule">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">Installation Schedule</div><div class="adm-sec-sub">Manage technician assignments</div></div></div>
+        <div class="adm-panel" style="margin-bottom:20px">
+          <div class="adm-panel-hdr">📅 Upcoming Installations</div>
+          <table><thead><tr><th>Client</th><th>Address</th><th>Plan</th><th>Scheduled</th><th>Technician</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Mark Villanueva</td><td>Makati City</td><td>Fiber 25</td><td>Mar 25, 2026 · 9:00 AM</td><td>Tech Team A</td><td><span class="badge badge-warning">Scheduled</span></td></tr>
+            <tr><td>Gina Lopez</td><td>Manila City</td><td>Fiber 100</td><td>Mar 27, 2026 · 1:00 PM</td><td>Tech Team B</td><td><span class="badge badge-info">Approved</span></td></tr>
+          </tbody></table>
+        </div>
+        <div class="adm-panel">
+          <div class="adm-panel-hdr">➕ Add to Schedule</div>
+          <div class="adm-g2">
+            <div class="fg"><label class="fl">Client Name</label><input type="text" class="inp-dk" placeholder="From approved applications"/></div>
+            <div class="fg"><label class="fl">Date</label><input type="date" class="inp-dk"/></div>
+            <div class="fg"><label class="fl">Time Slot</label><select class="inp-dk"><option>9:00 AM – 12:00 PM</option><option>1:00 PM – 5:00 PM</option></select></div>
+            <div class="fg"><label class="fl">Technician</label><select class="inp-dk"><option>Tech Team A</option><option>Tech Team B</option><option>Tech Team C</option></select></div>
+          </div>
+          <button class="btn btn-primary-dk" onclick="toast('Installation scheduled! 📅','success')">📅 Add to Schedule</button>
+        </div>
+      </div>
+
+      <!-- ARCHIVE -->
+      <div class="adm-sec" id="adm-sec-archive">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">Archive</div><div class="adm-sec-sub">Archived and rejected applications</div></div></div>
+        <div class="adm-tbl-wrap">
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">🗃️ Archived</span></div>
+          <table><thead><tr><th>Name</th><th>Plan</th><th>Date Applied</th><th>Archived On</th><th>Reason</th></tr></thead>
+          <tbody><tr><td>Sample Applicant</td><td>Fiber 25</td><td>2025-02-10</td><td>2025-02-15</td><td><span class="badge badge-muted">Duplicate</span></td></tr></tbody></table>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="adm-sec" id="adm-sec-settings">
+        <div class="adm-sec-hdr"><div><div class="adm-sec-title">Branch Settings</div><div class="adm-sec-sub">Configure branch-level options</div></div></div>
+        <div class="adm-g2">
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">📱 GCash Number</div>
+            <div class="fg"><label class="fl">GCash Number (shown to clients)</label><input type="text" class="inp-dk" id="gcash-number" placeholder="09XX-XXX-XXXX"/></div>
+            <div class="fg"><label class="fl">GCash Account Name</label><input type="text" class="inp-dk" placeholder="OFTIX NETWORK"/></div>
+            <p style="font-size:.78rem;color:var(--adm-dim);margin-bottom:14px">This number is displayed to clients in the payment section.</p>
+            <button class="btn btn-primary-dk" onclick="saveGCash()">💾 Save GCash Settings</button>
+          </div>
+          <div class="adm-panel">
+            <div class="adm-panel-hdr">🔒 Change Password</div>
+            <div class="fg"><label class="fl">Current Password</label><input type="password" class="inp-dk" placeholder="Current password"/></div>
+            <div class="fg"><label class="fl">New Password</label><input type="password" class="inp-dk" placeholder="New password"/></div>
+            <div class="fg"><label class="fl">Confirm Password</label><input type="password" class="inp-dk" placeholder="Confirm new password"/></div>
+            <button class="btn btn-primary-dk" onclick="toast('Password updated! 🔒','success')">🔒 Update Password</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /adm-scroll -->
+  </div>
+</div>
+
+<script src="/assets/js/script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const st = JSON.parse(sessionStorage.getItem('oftix_v3')||'{}');
+  const user = st.current_user||{};
+  const branches = st.branches||[];
+  const branch = branches.find(b=>b.id===user.branch_id)||branches[0]||{};
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  s('branch-name-disp', branch.name||'—');
+  s('topbar-branch', branch.name||'—');
+  s('overview-branch-sub', branch.name||'Branch Dashboard');
+});
+</script>
+</body>
+</html>
