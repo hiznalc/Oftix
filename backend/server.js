@@ -37,9 +37,13 @@ app.use(morgan('combined', {
   stream: { write: (msg) => logger.info(msg.trim()) },
 }));
 
+// Serve static assets (CSS, JS, images)
+app.use('/assets', express.static(path.join(__dirname, '..', 'frontend', 'assets')));
+
 // Global rate limiter
 app.use(createLimiter({ windowMs: 15 * 60 * 1000, max: 150 }));
 
+// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/branch', branchRoutes);
@@ -47,9 +51,16 @@ app.use('/api/client', clientRoutes);
 
 app.get('/api/health', (req, res) => res.json({ success: true, message: 'API is healthy.' }));
 
-app.use(handleErrors);
+// Serve HTML pages (must be after API routes to avoid conflicts)
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html')));
+app.get('/register.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'register.html')));
+app.get('/admin-dashboard.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'admin-dashboard.html')));
+app.get('/branch-dashboard.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'branch-dashboard.html')));
+app.get('/client-dashboard.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'client-dashboard.html')));
 
-app.use(express.static(path.join(__dirname, '..', 'frontend', 'assets')));
-app.use('/', express.static(path.join(__dirname, '..', 'frontend', 'pages')));
+// Fallback for any other requests to index.html (SPA-like routing)
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html')));
+
+app.use(handleErrors);
 
 app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
