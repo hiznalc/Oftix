@@ -4,6 +4,11 @@ const API_BASE = '/api';
 
 // ── Utilities ────────────────────────────────────────────────────────────────
 
+const escapeHtml = (str) => {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return String(str || '').replace(/[&<>"']/g, c => map[c]);
+};
+
 const toast = (msg, type = 'info', dur = 3500) => {
   let c = document.getElementById('toast-container');
   if (!c) { c = document.createElement('div'); c.id = 'toast-container'; document.body.appendChild(c); }
@@ -15,14 +20,26 @@ const toast = (msg, type = 'info', dur = 3500) => {
 };
 
 const request = async (path, options = {}) => {
-  const res = await fetch(API_BASE + path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Server error');
-  return data;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  try {
+    const res = await fetch(API_BASE + path, {
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
+      ...options,
+    });
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error('Invalid server response');
+    }
+    if (!res.ok) throw new Error(data.message || 'Server error');
+    return data;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 };
 
 const redirectByRole = (role) => {
@@ -131,40 +148,47 @@ const verifyPin = async () => {
 const loadAdminDashboard = async () => {
   try {
     const resp = await request('/admin/dashboard');
-    const d = resp.data;
-    document.getElementById('stat-clients')  && (document.getElementById('stat-clients').textContent  = d.total_clients  ?? '0');
-    document.getElementById('stat-branches') && (document.getElementById('stat-branches').textContent = d.total_branches ?? '0');
-    document.getElementById('stat-admins')   && (document.getElementById('stat-admins').textContent   = d.total_users    ?? '0');
+    const d = resp.data || {};
+    const setStatSafe = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val ?? '0');
+    };
+    setStatSafe('stat-clients', d.total_clients);
+    setStatSafe('stat-branches', d.total_branches);
+    setStatSafe('stat-admins', d.total_users);
   } catch (err) {
-    toast('Admin access required', 'danger');
-    setTimeout(() => { window.location.href = '/index.html'; }, 1000);
+    toast((err.name === 'AbortError' ? 'Request timeout' : err.message) || 'Admin access required', 'danger');
   }
 };
 
 const loadBranchDashboard = async () => {
   try {
     const resp = await request('/branch/dashboard');
-    const d = resp.data;
-    const stats = document.querySelectorAll('.adm-stat .adm-stat-val');
-    // Update clients and tickets if stat elements exist by id
-    document.getElementById('stat-clients')  && (document.getElementById('stat-clients').textContent  = d.total_clients  ?? '0');
-    document.getElementById('stat-tickets')  && (document.getElementById('stat-tickets').textContent  = d.total_tickets  ?? '0');
+    const d = resp.data || {};
+    const setStatSafe = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val ?? '0');
+    };
+    setStatSafe('stat-clients', d.total_clients);
+    setStatSafe('stat-tickets', d.total_tickets);
   } catch (err) {
-    toast('Branch access required', 'danger');
-    setTimeout(() => { window.location.href = '/index.html'; }, 1000);
+    toast((err.name === 'AbortError' ? 'Request timeout' : err.message) || 'Branch access required', 'danger');
   }
 };
 
 const loadClientDashboard = async () => {
   try {
     const resp = await request('/client/profile');
-    const u = resp.data;
-    document.getElementById('u-name-disp')  && (document.getElementById('u-name-disp').textContent  = u.name    || '');
-    document.getElementById('u-role-disp')  && (document.getElementById('u-role-disp').textContent  = u.role    || '');
-    document.getElementById('u-email-disp') && (document.getElementById('u-email-disp').textContent = u.email   || '');
+    const u = resp.data || {};
+    const setFieldSafe = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val || '');
+    };
+    setFieldSafe('u-name-disp', u.name);
+    setFieldSafe('u-role-disp', u.role);
+    setFieldSafe('u-email-disp', u.email);
   } catch (err) {
-    toast('Client access required', 'danger');
-    setTimeout(() => { window.location.href = '/index.html'; }, 1000);
+    toast((err.name === 'AbortError' ? 'Request timeout' : err.message) || 'Client access required', 'danger');
   }
 };
 

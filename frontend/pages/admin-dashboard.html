@@ -296,42 +296,109 @@
 
 <script src="/assets/js/script.js"></script>
 <script>
+const escapeHtml = (str) => {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return String(str || '').replace(/[&<>"']/g, c => map[c]);
+};
+
 document.addEventListener('DOMContentLoaded', ()=>{
   const st = JSON.parse(sessionStorage.getItem('oftix_v3')||'{}');
-  const branches = st.branches||[];
-  const clients  = st.clients||[];
-  const payments = st.payments||[];
-  const tickets  = st.tickets||[];
+  const branches = Array.isArray(st.branches) ? st.branches : [];
+  const clients  = Array.isArray(st.clients) ? st.clients : [];
+  const payments = Array.isArray(st.payments) ? st.payments : [];
+  const tickets  = Array.isArray(st.tickets) ? st.tickets : [];
+
+  // Safe HTML builder with text nodes
+  const buildRow = (cols) => {
+    const row = document.createElement('tr');
+    cols.forEach(col => {
+      const cell = document.createElement('td');
+      cell.appendChild(document.createTextNode(col));
+      row.appendChild(cell);
+    });
+    return row;
+  };
 
   // All clients table
   const actb = document.getElementById('all-clients-tbody');
-  if(actb) actb.innerHTML = clients.map(c=>{
-    const br = branches.find(b=>b.id===c.branch_id);
-    return `<tr><td>${c.name}</td><td>${c.plan}</td><td>${br?.name||'—'}</td>
-      <td><span class="badge badge-${c.status==='active'?'success':'warning'}">${c.status}</span></td>
-      <td><span class="badge badge-${c.payment_status==='paid'?'success':c.payment_status==='pending'?'warning':'danger'}">${c.payment_status}</span></td>
-      <td>${c.install_date||'Pending'}</td><td>${c.due_date||'—'}</td></tr>`;
-  }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--adm-muted);padding:28px">No clients found</td></tr>';
+  if(actb) {
+    actb.innerHTML = '';
+    if (clients.length > 0) {
+      clients.forEach(c=>{
+        const br = branches.find(b=>b.id===c.branch_id);
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${escapeHtml(c.name||'')}</td><td>${escapeHtml(c.plan||'')}</td><td>${escapeHtml(br?.name||'—')}</td>
+          <td><span class="badge badge-${c.status==='active'?'success':'warning'}">${escapeHtml(c.status||'')}</span></td>
+          <td><span class="badge badge-${c.payment_status==='paid'?'success':c.payment_status==='pending'?'warning':'danger'}">${escapeHtml(c.payment_status||'')}</span></td>
+          <td>${escapeHtml(c.install_date||'Pending')}</td><td>${escapeHtml(c.due_date||'—')}</td>`;
+        actb.appendChild(row);
+      });
+    } else {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 7;
+      cell.style.textAlign = 'center';
+      cell.style.color = 'var(--adm-muted)';
+      cell.style.padding = '28px';
+      cell.textContent = 'No clients found';
+      row.appendChild(cell);
+      actb.appendChild(row);
+    }
+  }
 
   // All payments table
   const aptb = document.getElementById('all-payments-tbody');
-  if(aptb) aptb.innerHTML = payments.map(p=>{
-    const br = branches.find(b=>b.id===p.branch_id);
-    return `<tr><td>${p.client}</td><td>${br?.name||'—'}</td><td>₱${p.amount.toLocaleString()}</td>
-      <td>${p.method}</td><td>${p.date}</td>
-      <td><span class="badge badge-${p.status==='verified'?'success':'warning'}">${p.status}</span></td>
-      <td>${p.receipt?'<span class="badge badge-info">Yes</span>':'<span class="badge badge-muted">No</span>'}</td></tr>`;
-  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--adm-muted)">No payments</td></tr>';
+  if(aptb) {
+    aptb.innerHTML = '';
+    if (payments.length > 0) {
+      payments.forEach(p=>{
+        const br = branches.find(b=>b.id===p.branch_id);
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${escapeHtml(p.client||'')}</td><td>${escapeHtml(br?.name||'—')}</td><td>₱${Number(p.amount||0).toLocaleString()}</td>
+          <td>${escapeHtml(p.method||'')}</td><td>${escapeHtml(p.date||'')}</td>
+          <td><span class="badge badge-${p.status==='verified'?'success':'warning'}">${escapeHtml(p.status||'')}</span></td>
+          <td>${p.receipt?'<span class="badge badge-info">Yes</span>':'<span class="badge badge-muted">No</span>'}</td>`;
+        aptb.appendChild(row);
+      });
+    } else {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 7;
+      cell.style.textAlign = 'center';
+      cell.style.padding = '28px';
+      cell.style.color = 'var(--adm-muted)';
+      cell.textContent = 'No payments';
+      row.appendChild(cell);
+      aptb.appendChild(row);
+    }
+  }
 
   // All tickets table
   const attb = document.getElementById('all-tickets-tbody');
-  if(attb) attb.innerHTML = tickets.map(t=>{
-    const br = branches.find(b=>b.id===t.branch_id);
-    return `<tr><td>${t.client}</td><td>${br?.name||'—'}</td><td>${t.subject}</td>
-      <td>${t.date}</td>
-      <td><span class="badge badge-${t.status==='open'?'warning':'success'}">${t.status}</span></td>
-      <td style="font-size:.82rem;color:var(--adm-muted)">${t.response||'—'}</td></tr>`;
-  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--adm-muted)">No tickets</td></tr>';
+  if(attb) {
+    attb.innerHTML = '';
+    if (tickets.length > 0) {
+      tickets.forEach(t=>{
+        const br = branches.find(b=>b.id===t.branch_id);
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${escapeHtml(t.client||'')}</td><td>${escapeHtml(br?.name||'—')}</td><td>${escapeHtml(t.subject||'')}</td>
+          <td>${escapeHtml(t.date||'')}</td>
+          <td><span class="badge badge-${t.status==='open'?'warning':'success'}">${escapeHtml(t.status||'')}</span></td>
+          <td style="font-size:.82rem;color:var(--adm-muted)">${escapeHtml(t.response||'—')}</td>`;
+        attb.appendChild(row);
+      });
+    } else {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 6;
+      cell.style.textAlign = 'center';
+      cell.style.padding = '28px';
+      cell.style.color = 'var(--adm-muted)';
+      cell.textContent = 'No tickets';
+      row.appendChild(cell);
+      attb.appendChild(row);
+    }
+  }
 
   // Sync page title on nav clicks
   document.querySelectorAll('.adm-nav-item').forEach(item=>{

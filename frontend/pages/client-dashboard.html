@@ -457,6 +457,19 @@
   btn.addEventListener('click', function(){ dark = !dark; applyTheme(); });
 
   // Dark BG canvas (mirrors main initBG but on #bg-canvas-cli)
+  let animationFrameId = null;
+  let isAnimating = true;
+  
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      isAnimating = false;
+    } else if (!document.hidden && !isAnimating) {
+      tick();
+      isAnimating = true;
+    }
+  });
+
   document.addEventListener('DOMContentLoaded', function(){
     if(!bgCli) return;
     const ctx = bgCli.getContext('2d');
@@ -486,10 +499,11 @@
       ctx.beginPath(); ctx.arc(f.x,f.y,f.w*3,0,Math.PI*2); ctx.fillStyle=tg; ctx.fill();
     }
     function tick(){
+      if (!isAnimating) return;
       ctx.clearRect(0,0,W,H);
       nodes.forEach(n=>{ n.p+=n.sp; const a=n.a*(.5+.5*Math.sin(n.p)); const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*4); g.addColorStop(0,`rgba(${n.col},${a})`); g.addColorStop(1,`rgba(${n.col},0)`); ctx.beginPath(); ctx.arc(n.x,n.y,n.r*4,0,Math.PI*2); ctx.fillStyle=g; ctx.fill(); });
       fibers.forEach((f,i)=>{ f.p+=.018; f.x+=f.dx; f.y+=f.dy; const oob=f.fl?f.x>W+f.len+100:f.y>H+f.len+100; if(oob) fibers[i]=mkF(); else drawF(f); });
-      requestAnimationFrame(tick);
+      animationFrameId = requestAnimationFrame(tick);
     }
     tick();
   });
