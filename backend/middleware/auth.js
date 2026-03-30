@@ -9,7 +9,7 @@ const verifyToken = (req, res, next) => {
 
     // jwt.verify throws if expired or invalid — no manual exp check needed
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { id: decoded.id, role: decoded.role, email: decoded.email };
+    req.user = { id: decoded.id, role: decoded.role, email: decoded.email, branch_id: decoded.branch_id || null };
     next();
   } catch (error) {
     logger.warn({ message: 'Auth failure', error: error.message, ip: req.ip });

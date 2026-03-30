@@ -13,7 +13,6 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const branchRoutes = require('./routes/branchRoutes');
 const clientRoutes = require('./routes/clientRoutes');
-const { createLimiter } = require('./middleware/rateLimiter');
 const { handleErrors } = require('./middleware/errorHandler');
 
 if (!process.env.JWT_SECRET) {
@@ -24,7 +23,19 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "fonts.googleapis.com"],
+      fontSrc: ["'self'", "fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:"],
+      connectSrc: ["'self'", "cdn.jsdelivr.net"],
+    },
+  },
+}));
 app.use(express.json({ limit: '20kb' }));
 app.use(express.urlencoded({ extended: true, limit: '20kb' }));
 app.use(cookieParser());
@@ -40,8 +51,6 @@ app.use(morgan('combined', {
 // Serve static assets (CSS, JS, images)
 app.use('/assets', express.static(path.join(__dirname, '..', 'frontend', 'assets')));
 
-// Global rate limiter
-app.use(createLimiter({ windowMs: 15 * 60 * 1000, max: 150 }));
 
 // API routes
 app.use('/api/auth', authRoutes);

@@ -82,9 +82,6 @@ const login = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'Invalid credentials.' });
     }
     const user = rows[0];
-    if (!user.email_verified) {
-      return res.status(403).json({ success: false, message: 'Email not verified. Please verify before login.' });
-    }
     if (!(await bcrypt.compare(password, user.password))) {
       logger.warn({ event: 'login_fail', reason: 'wrong_password', username, ip: req.ip });
       return res.status(401).json({ success: false, message: 'Invalid credentials.' });
@@ -94,7 +91,7 @@ const login = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Role mismatch.' });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, jwtSecret, { expiresIn: jwtExpiry });
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role, branch_id: user.branch_id || null }, jwtSecret, { expiresIn: jwtExpiry });
     createCookie(token, res);
     logger.info({ event: 'login_success', userId: user.id, role: user.role, ip: req.ip });
 

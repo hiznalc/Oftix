@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Oftix Network — Super Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="/assets/css/styles.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -132,7 +133,16 @@
       <div class="adm-sec" id="adm-sec-clients">
         <div class="adm-sec-hdr">
           <div><div class="adm-sec-title">All Clients</div><div class="adm-sec-sub">Network-wide subscriber list</div></div>
-          <div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search client…"/></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="srch-dk"><span>🔍</span><input type="text" id="clients-search" placeholder="Search client…" oninput="filterClients(this.value)"/></div>
+            <div style="position:relative;display:inline-block">
+              <button class="btn btn-outline-dk" onclick="document.getElementById('export-dd').style.display=document.getElementById('export-dd').style.display==='block'?'none':'block'">📥 Generate PDF / Excel ▾</button>
+              <div id="export-dd" style="display:none;position:absolute;right:0;top:110%;background:var(--adm-card);border:1px solid var(--adm-border);border-radius:10px;min-width:160px;z-index:99;overflow:hidden">
+                <div onclick="exportClients('excel');document.getElementById('export-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📊 Excel (.csv)</div>
+                <div onclick="exportClients('pdf');document.getElementById('export-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📄 PDF (Print)</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="adm-tbl-wrap">
           <table><thead><tr><th>Name</th><th>Plan</th><th>Branch</th><th>Status</th><th>Payment</th><th>Install Date</th><th>Due Date</th></tr></thead>
@@ -149,7 +159,19 @@
           <div class="adm-stat"><span class="adm-stat-icon">📋</span><div class="adm-stat-val">3</div><div class="adm-stat-lbl">Total Transactions</div></div>
         </div>
         <div class="adm-tbl-wrap">
-          <div class="adm-tbl-hdr"><span class="adm-tbl-title">💰 Payment Records</span></div>
+          <div class="adm-tbl-hdr">
+            <span class="adm-tbl-title">💰 Payment Records</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="srch-dk"><span>🔍</span><input type="text" id="payments-search" placeholder="Search payment…" oninput="filterPayments(this.value)"/></div>
+              <div style="position:relative;display:inline-block">
+                <button class="btn btn-outline-dk" onclick="document.getElementById('export-pay-dd').style.display=document.getElementById('export-pay-dd').style.display==='block'?'none':'block'">📥 Generate PDF / Excel ▾</button>
+                <div id="export-pay-dd" style="display:none;position:absolute;right:0;top:110%;background:var(--adm-card);border:1px solid var(--adm-border);border-radius:10px;min-width:160px;z-index:99;overflow:hidden">
+                  <div onclick="exportPayments('excel');document.getElementById('export-pay-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📊 Excel (.csv)</div>
+                  <div onclick="exportPayments('pdf');document.getElementById('export-pay-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📄 PDF (Print)</div>
+                </div>
+              </div>
+            </div>
+          </div>
           <table><thead><tr><th>Client</th><th>Branch</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th><th>Receipt</th></tr></thead>
           <tbody id="all-payments-tbody"></tbody></table>
         </div>
@@ -164,7 +186,20 @@
           <div class="adm-stat"><span class="adm-stat-icon">⏱️</span><div class="adm-stat-val">&lt;24h</div><div class="adm-stat-lbl">Avg Response Time</div></div>
         </div>
         <div class="adm-tbl-wrap">
-          <table><thead><tr><th>Client</th><th>Branch</th><th>Subject</th><th>Date</th><th>Status</th><th>Response</th></tr></thead>
+          <div class="adm-tbl-hdr">
+            <span class="adm-tbl-title">🎫 Tickets</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="srch-dk"><span>🔍</span><input type="text" id="tickets-search" placeholder="Search ticket…" oninput="filterTickets(this.value)"/></div>
+              <div style="position:relative;display:inline-block">
+                <button class="btn btn-outline-dk" onclick="document.getElementById('export-tkt-dd').style.display=document.getElementById('export-tkt-dd').style.display==='block'?'none':'block'">📥 Generate PDF / Excel ▾</button>
+                <div id="export-tkt-dd" style="display:none;position:absolute;right:0;top:110%;background:var(--adm-card);border:1px solid var(--adm-border);border-radius:10px;min-width:160px;z-index:99;overflow:hidden">
+                  <div onclick="exportTickets('excel');document.getElementById('export-tkt-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📊 Excel (.csv)</div>
+                  <div onclick="exportTickets('pdf');document.getElementById('export-tkt-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📄 PDF (Print)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table><thead><tr><th>Client</th><th>Branch</th><th>Subject</th><th>Date</th><th>Status</th><th>Priority</th></tr></thead>
           <tbody id="all-tickets-tbody"></tbody></table>
         </div>
       </div>
@@ -173,7 +208,16 @@
       <div class="adm-sec" id="adm-sec-reports">
         <div class="adm-sec-hdr">
           <div><div class="adm-sec-title">Reports &amp; Analytics</div><div class="adm-sec-sub">Performance and financial insights</div></div>
-          <button class="btn btn-outline-dk" onclick="toast('Report exported! 📥','success')">📥 Export PDF</button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="srch-dk"><span>🔍</span><input type="text" id="reports-search" placeholder="Search branch…" oninput="filterReports(this.value)"/></div>
+            <div style="position:relative;display:inline-block">
+            <button class="btn btn-outline-dk" onclick="document.getElementById('export-rep-dd').style.display=document.getElementById('export-rep-dd').style.display==='block'?'none':'block'">📥 Generate PDF / Excel ▾</button>
+            <div id="export-rep-dd" style="display:none;position:absolute;right:0;top:110%;background:var(--adm-card);border:1px solid var(--adm-border);border-radius:10px;min-width:160px;z-index:99;overflow:hidden">
+              <div onclick="exportReport('excel');document.getElementById('export-rep-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📊 Excel (.csv)</div>
+              <div onclick="exportReport('pdf');document.getElementById('export-rep-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📄 PDF (Print)</div>
+            </div>
+            </div>
+          </div>
         </div>
         <div class="adm-stats">
           <div class="adm-stat"><span class="adm-stat-icon">💵</span><div class="adm-stat-val">₱74,000</div><div class="adm-stat-lbl">March Revenue</div><div class="adm-stat-trend">↑ +10.4%</div></div>
@@ -296,10 +340,6 @@
 
 <script src="/assets/js/script.js"></script>
 <script>
-const escapeHtml = (str) => {
-  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-  return String(str || '').replace(/[&<>"']/g, c => map[c]);
-};
 
 document.addEventListener('DOMContentLoaded', ()=>{
   const st = JSON.parse(sessionStorage.getItem('oftix_v3')||'{}');
@@ -410,5 +450,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
