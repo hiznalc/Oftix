@@ -7,6 +7,8 @@ const { validateRequest } = require('../middleware/validate');
 const router = express.Router();
 router.use(verifyToken, requireRole(['client']));
 
+router.get('/payments/qr', c.getPaymentQR);
+
 router.get('/dashboard', c.dashboard);
 router.get('/profile', c.getProfile);
 router.put('/profile', [

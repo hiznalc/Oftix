@@ -4,31 +4,10 @@
 
 ---
 
-## Seeding the Database
+## Setup
 
-```bash
-mysql -u root < database.sql
-```
-
-Then set known passwords (the seed inserts empty password hashes — run this once in Node):
-
-```js
-const bcrypt = require('bcrypt');
-const mysql = require('mysql2/promise');
-require('dotenv').config();
-
-const pool = mysql.createPool({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME });
-
-async function seed() {
-  const hash = (p) => bcrypt.hash(p, 12);
-  await pool.execute('UPDATE users SET password=? WHERE username=?', [await hash('Admin@1234'), 'superadmin']);
-  await pool.execute('UPDATE users SET password=? WHERE username=?', [await hash('Branch@1234'), 'admin_qc']);
-  await pool.execute('UPDATE users SET password=? WHERE username=?', [await hash('Client@1234'), 'client1']);
-  console.log('Passwords seeded.');
-  process.exit(0);
-}
-seed();
-```
+1. Import `database.sql` via phpMyAdmin (passwords are pre-hashed — no extra step needed)
+2. Or run `node seed-passwords.js` if you need to reset passwords
 
 ---
 
@@ -37,36 +16,44 @@ seed();
 ### Super Admin
 | Field    | Value               |
 |----------|---------------------|
+| Username | `superadmin`        |
+| Password | `superadmin`        |
 | Email    | admin@oftix.local   |
-| Username | superadmin          |
-| Password | Admin@1234          |
 | Role     | admin               |
 
-### Branch Admin (QC)
-| Field     | Value               |
-|-----------|---------------------|
-| Email     | qcadmin@oftix.local |
-| Username  | admin_qc            |
-| Password  | Branch@1234         |
-| Role      | branch              |
-| Branch ID | 1                   |
+### Branch Admins
+| Username         | Password | Branch          |
+|------------------|----------|-----------------|
+| `admin_qc`       | `admin`  | Oftix Quezon City |
+| `admin_makati`   | `admin`  | Oftix Makati    |
+| `admin_manila`   | `admin`  | Oftix Manila    |
+| `admin_eastwood` | `admin`  | Oftix Eastwood  |
 
-### Client
-| Field     | Value                |
-|-----------|----------------------|
-| Email     | client1@oftix.local  |
-| Username  | client1              |
-| Password  | Client@1234          |
-| Role      | client               |
-| Branch ID | 1                    |
+### Clients
+| Username      | Password      | Branch          |
+|---------------|---------------|-----------------|
+| `juandc`      | `Client@1234` | Quezon City     |
+| `mariasantos` | `Client@1234` | Makati          |
+| `carlom`      | `Client@1234` | Quezon City     |
+| `sofian`      | `Client@1234` | Manila          |
+| `jeromeb`     | `Client@1234` | Quezon City     |
+| `ginalopez`   | `Client@1234` | Makati          |
 
 ---
 
 ## Access Matrix
 
-| Route prefix    | admin | branch | client |
-|-----------------|-------|--------|--------|
-| /api/admin/*    | ✅    | ❌     | ❌     |
-| /api/branch/*   | ❌    | ✅     | ❌     |
-| /api/client/*   | ❌    | ❌     | ✅     |
-| /api/auth/*     | ✅    | ✅     | ✅     |
+| Route prefix  | admin | branch | client |
+|---------------|-------|--------|--------|
+| /api/admin/*  | ✅    | ❌     | ❌     |
+| /api/branch/* | ❌    | ✅     | ❌     |
+| /api/client/* | ❌    | ❌     | ✅     |
+| /api/auth/*   | ✅    | ✅     | ✅     |
+
+---
+
+## Login Notes
+
+- Admin/Branch login requires the **3-digit PIN `786`** on the login page first
+- Client login goes directly through the main login form
+- All accounts have `email_verified = 1` and `status = active` in the seed data

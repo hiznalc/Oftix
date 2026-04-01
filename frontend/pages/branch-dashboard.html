@@ -28,7 +28,7 @@
       <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em">Dashboard</div>
       <div class="adm-nav-item active" data-sec="overview"><span class="n-icon">📊</span><span class="n-label">Overview</span></div>
       <div style="padding:10px 18px 5px;font-size:.64rem;font-weight:800;color:var(--adm-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px">Operations</div>
-      <div class="adm-nav-item" data-sec="applications"><span class="n-icon">📝</span><span class="n-label">Applications</span><span class="n-badge">3</span></div>
+      <div class="adm-nav-item" data-sec="applications"><span class="n-icon">📝</span><span class="n-label">Applications</span><span class="n-badge" id="apps-badge">0</span></div>
       <div class="adm-nav-item" data-sec="clients"><span class="n-icon">👥</span><span class="n-label">Client List</span></div>
       <div class="adm-nav-item" data-sec="payments"><span class="n-icon">💰</span><span class="n-label">Payments</span></div>
       <div class="adm-nav-item" data-sec="tickets"><span class="n-icon">🎫</span><span class="n-label">Support Tickets</span></div>
@@ -54,6 +54,7 @@
         <span class="adm-page-title" id="adm-page-title">Overview</span>
       </div>
       <div class="adm-topbar-r">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode" style="width:36px;height:36px;border-radius:10px;border:1.5px solid var(--adm-border);background:var(--adm-card);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center">🌙</button>
         <span style="font-size:.8rem;color:var(--accent);font-weight:600" id="topbar-branch">Branch</span>
         <span style="font-size:.78rem;color:var(--adm-muted);padding:4px 10px;background:rgba(0,100,255,.10);border-radius:20px;border:1px solid var(--adm-border)"><span class="dot dot-on"></span>Online</span>
       </div>
@@ -87,7 +88,7 @@
         </div>
         <div class="alert al-info-dk" style="margin-bottom:18px">💡 Workflow: <strong>Pending → Approve → Schedule → Mark Installed</strong> — Client moves to client list automatically.</div>
         <div class="adm-tbl-wrap">
-          <div class="adm-tbl-hdr"><span class="adm-tbl-title">📝 All Applications</span><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search applicant…"/></div></div>
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">📝 All Applications</span><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search applicant…" oninput="filterTbl(this,'apps-tbody')"/></div></div>
           <table><thead><tr><th>Name</th><th>Contact</th><th>Plan</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apps-tbody"></tbody></table>
         </div>
       </div>
@@ -96,7 +97,7 @@
       <div class="adm-sec" id="adm-sec-clients">
         <div class="adm-sec-hdr"><div><div class="adm-sec-title">Client List</div><div class="adm-sec-sub">Active subscribers in this branch</div></div></div>
         <div class="adm-tbl-wrap">
-          <div class="adm-tbl-hdr"><span class="adm-tbl-title">👥 Subscribers</span><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search client…"/></div></div>
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">👥 Subscribers</span><div style="display:flex;gap:8px;align-items:center"><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search client…" oninput="filterTbl(this,'clients-tbody')"/></div><div style="position:relative;display:inline-block"><button class="btn btn-outline-dk" onclick="document.getElementById('br-cli-dd').style.display=document.getElementById('br-cli-dd').style.display==='block'?'none':'block'">📥 Export ▾</button><div id="br-cli-dd" style="display:none;position:absolute;right:0;top:110%;background:var(--adm-card);border:1px solid var(--adm-border);border-radius:10px;min-width:150px;z-index:99;overflow:hidden"><div onclick="exportTbl('clients-tbody','branch-clients');document.getElementById('br-cli-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📊 Excel (.csv)</div><div onclick="exportTblPdf('clients-tbody','Branch Clients');document.getElementById('br-cli-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📄 PDF (Print)</div></div></div></div></div>
           <table><thead><tr><th>Name</th><th>Contact</th><th>Plan</th><th>Status</th><th>Payment</th><th>Install Date</th></tr></thead><tbody id="clients-tbody"></tbody></table>
         </div>
       </div>
@@ -105,8 +106,16 @@
       <div class="adm-sec" id="adm-sec-payments">
         <div class="adm-sec-hdr"><div><div class="adm-sec-title">Payments</div><div class="adm-sec-sub">Verify client payments and receipts</div></div></div>
         <div class="adm-tbl-wrap">
-          <div class="adm-tbl-hdr"><span class="adm-tbl-title">💰 Payment Records</span></div>
-          <table><thead><tr><th>Client</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th><th>Receipt</th><th>Action</th></tr></thead><tbody id="payments-tbody"></tbody></table>
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">💰 Payment Records</span><div style="display:flex;gap:8px;align-items:center"><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search payment…" oninput="filterTbl(this,'payments-tbody')"/></div><div style="display:flex;gap:8px;align-items:center">
+          <div style="position:relative;display:inline-block">
+            <button class="btn btn-outline-dk" onclick="document.getElementById('br-pay-dd').style.display=document.getElementById('br-pay-dd').style.display==='block'?'none':'block'">📥 Export ▾</button>
+            <div id="br-pay-dd" style="display:none;position:absolute;right:0;top:110%;background:var(--adm-card);border:1px solid var(--adm-border);border-radius:10px;min-width:150px;z-index:99;overflow:hidden">
+              <div onclick="exportTbl('payments-tbody','branch-payments');document.getElementById('br-pay-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📊 Excel (.csv)</div>
+              <div onclick="exportTblPdf('payments-tbody','Branch Payments');document.getElementById('br-pay-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📄 PDF (Print)</div>
+            </div>
+          </div>
+        </div></div></div>
+          <table><thead><tr><th>Client</th><th>Amount</th><th>Reference #</th><th>Method</th><th>Date</th><th>Status</th><th>Receipt</th><th>Action</th></tr></thead><tbody id="payments-tbody"></tbody></table>
         </div>
       </div>
 
@@ -114,7 +123,15 @@
       <div class="adm-sec" id="adm-sec-tickets">
         <div class="adm-sec-hdr"><div><div class="adm-sec-title">Support Tickets</div><div class="adm-sec-sub">Respond to client issues</div></div></div>
         <div class="adm-tbl-wrap">
-          <div class="adm-tbl-hdr"><span class="adm-tbl-title">🎫 Tickets</span></div>
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">🎫 Tickets</span><div style="display:flex;gap:8px;align-items:center"><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search ticket…" oninput="filterTbl(this,'tickets-tbody')"/></div><div style="display:flex;gap:8px;align-items:center">
+          <div style="position:relative;display:inline-block">
+            <button class="btn btn-outline-dk" onclick="document.getElementById('br-tkt-dd').style.display=document.getElementById('br-tkt-dd').style.display==='block'?'none':'block'">📥 Export ▾</button>
+            <div id="br-tkt-dd" style="display:none;position:absolute;right:0;top:110%;background:var(--adm-card);border:1px solid var(--adm-border);border-radius:10px;min-width:150px;z-index:99;overflow:hidden">
+              <div onclick="exportTbl('tickets-tbody','branch-tickets');document.getElementById('br-tkt-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📊 Excel (.csv)</div>
+              <div onclick="exportTblPdf('tickets-tbody','Branch Tickets');document.getElementById('br-tkt-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📄 PDF (Print)</div>
+            </div>
+          </div>
+        </div></div></div>
           <table><thead><tr><th>Client</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="tickets-tbody"></tbody></table>
         </div>
       </div>
@@ -132,7 +149,29 @@
           <div class="adm-g2">
             <div class="fg"><label class="fl">Application</label><select class="inp-dk" id="sched-app-select"><option value="" disabled selected>— Select application —</option></select></div>
             <div class="fg"><label class="fl">Date</label><input type="date" class="inp-dk" id="sched-date"/></div>
-            <div class="fg"><label class="fl">Time Slot</label><select class="inp-dk" id="sched-time"><option value="09:00:00">9:00 AM – 12:00 PM</option><option value="13:00:00">1:00 PM – 5:00 PM</option></select></div>
+            <div class="fg"><label class="fl">Time Slot</label>
+<input type="hidden" id="sched-time" value="09:00:00"/>
+<div style="display:flex;align-items:center;gap:16px;margin-top:6px;flex-wrap:wrap">
+
+  <div style="display:flex;align-items:center;gap:4px;background:rgba(0,15,50,.7);border:1.5px solid rgba(0,100,255,.3);border-radius:10px;padding:8px 14px">
+    <select id="slot-sh" style="font-family:'Exo 2',sans-serif;font-size:.9rem;background:rgba(0,15,50,.8);border:none;color:#fff;outline:none;cursor:pointer;padding:2px 4px" onchange="updateSlotDisplay()"><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09" selected>09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>
+    <span style="color:#fff;font-family:'Exo 2',sans-serif;font-weight:900">:</span>
+    <select id="slot-sm" style="font-family:'Exo 2',sans-serif;font-size:.9rem;background:rgba(0,15,50,.8);border:none;color:#fff;outline:none;cursor:pointer;padding:2px 4px" onchange="updateSlotDisplay()"><option value="00" selected>00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select>
+    <select id="slot-sa" style="font-family:'Exo 2',sans-serif;font-size:.9rem;background:rgba(0,15,50,.8);border:none;color:#fff;outline:none;cursor:pointer;padding:2px 4px;margin-left:6px" onchange="updateSlotDisplay()"><option value="AM">AM</option><option value="PM">PM</option></select>
+  </div>
+
+  <span style="color:#fff;font-weight:700;font-family:'Exo 2',sans-serif">–</span>
+
+  <div style="display:flex;align-items:center;gap:4px;background:rgba(0,15,50,.7);border:1.5px solid rgba(0,100,255,.3);border-radius:10px;padding:8px 14px">
+    <select id="slot-eh" style="font-family:'Exo 2',sans-serif;font-size:.9rem;background:rgba(0,15,50,.8);border:none;color:#fff;outline:none;cursor:pointer;padding:2px 4px" onchange="updateSlotDisplay()"><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04" selected>04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>
+    <span style="color:#fff;font-family:'Exo 2',sans-serif;font-weight:900">:</span>
+    <select id="slot-em" style="font-family:'Exo 2',sans-serif;font-size:.9rem;background:rgba(0,15,50,.8);border:none;color:#fff;outline:none;cursor:pointer;padding:2px 4px" onchange="updateSlotDisplay()"><option value="00" selected>00</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option></select>
+    <select id="slot-ea" style="font-family:'Exo 2',sans-serif;font-size:.9rem;background:rgba(0,15,50,.8);border:none;color:#fff;outline:none;cursor:pointer;padding:2px 4px;margin-left:6px" onchange="updateSlotDisplay()"><option value="AM">AM</option><option value="PM" selected>PM</option></select>
+  </div>
+
+</div>
+<div id="slot-preview" style="margin-top:8px;font-family:'Exo 2',sans-serif;font-size:.88rem;color:#fff;font-weight:700">🕘 09:00 AM – 04:00 PM</div>
+</div>
             <div class="fg"><label class="fl">Technician</label><select class="inp-dk" id="sched-tech"><option>Tech Team A</option><option>Tech Team B</option><option>Tech Team C</option></select></div>
           </div>
           <button class="btn btn-primary-dk" onclick="addSchedule()">📅 Add to Schedule</button>
@@ -143,7 +182,15 @@
       <div class="adm-sec" id="adm-sec-archive">
         <div class="adm-sec-hdr"><div><div class="adm-sec-title">Archive</div><div class="adm-sec-sub">Archived and rejected applications</div></div></div>
         <div class="adm-tbl-wrap">
-          <div class="adm-tbl-hdr"><span class="adm-tbl-title">🗃️ Archived</span></div>
+          <div class="adm-tbl-hdr"><span class="adm-tbl-title">🗃️ Archived</span><div style="display:flex;gap:8px;align-items:center"><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search…" oninput="filterTbl(this,'archive-tbody')"/></div><div style="display:flex;gap:8px;align-items:center">
+          <div style="position:relative;display:inline-block">
+            <button class="btn btn-outline-dk" onclick="document.getElementById('br-arc-dd').style.display=document.getElementById('br-arc-dd').style.display==='block'?'none':'block'">📥 Export ▾</button>
+            <div id="br-arc-dd" style="display:none;position:absolute;right:0;top:110%;background:var(--adm-card);border:1px solid var(--adm-border);border-radius:10px;min-width:150px;z-index:99;overflow:hidden">
+              <div onclick="exportTbl('archive-tbody','branch-archive');document.getElementById('br-arc-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📊 Excel (.csv)</div>
+              <div onclick="exportTblPdf('archive-tbody','Branch Archive');document.getElementById('br-arc-dd').style.display='none'" style="padding:11px 18px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(0,100,255,.12)'" onmouseout="this.style.background=''">📄 PDF (Print)</div>
+            </div>
+          </div>
+        </div></div></div>
           <table><thead><tr><th>Name</th><th>Plan</th><th>Date Applied</th><th>Archived On</th><th>Reason</th></tr></thead>
           <tbody><tr><td>Sample Applicant</td><td>Fiber 25</td><td>2025-02-10</td><td>2025-02-15</td><td><span class="badge badge-muted">Duplicate</span></td></tr></tbody></table>
         </div>

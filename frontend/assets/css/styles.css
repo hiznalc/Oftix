@@ -136,7 +136,7 @@ img{max-width:100%}
 }
 
 /* ── Toast ─────────────────────────────────────────────────── */
-#toast-container{position:fixed;top:22px;right:22px;z-index:99990;display:flex;flex-direction:column;gap:10px}
+#toast-container{position:fixed;top:22px;right:22px;z-index:999999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
 .toast{
   border-radius:12px;padding:14px 20px;font-size:0.92rem;min-width:290px;
   display:flex;align-items:center;gap:12px;
@@ -147,6 +147,10 @@ img{max-width:100%}
 .toast.hide{animation:toast-out 0.35s ease forwards}
 .toast-dk{background:rgba(4,14,44,.96);border:1px solid rgba(0,200,240,.4);color:#ddeeff;font-family:'Exo 2',sans-serif}
 .toast-lt{background:#fff;border:1.5px solid var(--cli-border);color:var(--cli-text);font-family:'Nunito',sans-serif}
+.toast-success{background:#0a3d1f;border:1.5px solid #22cc66;color:#afffcb}
+.toast-danger{background:#3d0a0a;border:1.5px solid #ff4444;color:#ffb3b3}
+.toast-warning{background:#3d2e00;border:1.5px solid #ffaa00;color:#ffe599}
+.toast-info{background:#0a1f3d;border:1.5px solid #0099ff;color:#b3d9ff}
 @keyframes toast-in {from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes toast-out{from{transform:translateX(0);opacity:1}to{transform:translateX(110%);opacity:0}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
@@ -341,7 +345,7 @@ tbody td{padding:12px 18px;font-size:.86rem;color:var(--adm-text)}
 .inp-dk{
   width:100%;background:rgba(0,15,50,.6);border:1.5px solid rgba(0,100,255,.22);
   border-radius:10px;color:var(--adm-text);padding:11px 15px;
-  font-family:'Exo 2',sans-serif;font-size:.9rem;outline:none;transition:var(--transition);
+  font-family:'Exo 2',sans-serif;font-size:.9rem;outline:none;transition:var(--transition);color-scheme:dark;
 }
 .inp-dk:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,200,240,.18);background:rgba(0,25,80,.7)}
 .inp-dk::placeholder{color:var(--adm-dim)}
@@ -733,3 +737,29 @@ textarea.inp-lt{resize:vertical;min-height:100px}
   background:transparent;
   mix-blend-mode:multiply;
 }
+
+.slot-btn{font-family:'Orbitron','Courier New',monospace;font-size:.82rem;padding:8px 14px;border-radius:8px;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,15,50,.6);color:var(--adm-text);cursor:pointer;transition:all .2s ease;letter-spacing:.05em}
+.slot-btn:hover{border-color:var(--accent);color:var(--accent)}
+.slot-btn.active{background:rgba(0,100,255,.25);border-color:var(--accent);color:var(--accent);box-shadow:0 0 10px rgba(0,200,240,.2)}
+
+/* ── Admin Light Mode ──────────────────────────────────────── */
+[data-theme="light"] .adm-wrap,
+[data-theme="light"] body{
+  --adm-bg:#f1f6ff;--adm-card:#ffffff;--adm-card2:#e8f0fd;
+  --adm-border:rgba(0,85,229,.15);--adm-border-hi:rgba(0,85,229,.35);
+  --adm-text:#182848;--adm-muted:#4a6494;--adm-dim:#8aa4cc;
+}
+[data-theme="light"] .adm-sidebar{background:#fff!important;border-right:1.5px solid rgba(0,85,229,.12)!important}
+[data-theme="light"] .adm-topbar{background:rgba(255,255,255,.96)!important;border-bottom:1.5px solid rgba(0,85,229,.1)!important}
+[data-theme="light"] .adm-nav-item{color:#4a6494!important}
+[data-theme="light"] .adm-nav-item:hover,[data-theme="light"] .adm-nav-item.active{background:rgba(0,85,229,.08)!important;color:#0055e5!important}
+[data-theme="light"] .adm-stat{background:#fff!important;border-color:rgba(0,85,229,.15)!important}
+[data-theme="light"] .adm-panel{background:#fff!important;border-color:rgba(0,85,229,.15)!important}
+[data-theme="light"] .adm-tbl-wrap{background:#fff!important;border-color:rgba(0,85,229,.15)!important}
+[data-theme="light"] table thead tr{background:rgba(0,85,229,.06)!important}
+[data-theme="light"] table thead th{color:#4a6494!important;border-color:rgba(0,85,229,.1)!important}
+[data-theme="light"] table tbody td{color:#182848!important}
+[data-theme="light"] table tbody tr:hover{background:rgba(0,85,229,.04)!important}
+[data-theme="light"] .inp-dk{background:#f1f6ff!important;border-color:rgba(0,85,229,.2)!important;color:#182848!important}
+[data-theme="light"] .btn-outline-dk{border-color:rgba(0,85,229,.3)!important;color:#0055e5!important}
+[data-theme="light"] #bg-canvas,[data-theme="light"] #bg-canvas-wrap{opacity:0.04!important}

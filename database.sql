@@ -256,27 +256,27 @@ INSERT INTO plans (name, speed, price, description, status) VALUES
 
 -- Branches
 INSERT INTO branches (name, location, gcash_number, status) VALUES
-('Oftix Quezon City', 'Quezon City, Metro Manila', '09178901234', 'active'),
-('Oftix Makati', 'Makati City, Metro Manila', '09178901235', 'active'),
-('Oftix Manila', 'Manila City, Metro Manila', '09178901236', 'active'),
-('Oftix Eastwood', 'Libis, Quezon City', '09178901237', 'active');
+('Oftix Quezon City', 'Quezon City, Metro Manila', '09507724215', 'active'),
+('Oftix Makati', 'Makati City, Metro Manila', '09507724215', 'active'),
+('Oftix Manila', 'Manila City, Metro Manila', '09507724215', 'active'),
+('Oftix Eastwood', 'Libis, Quezon City', '09507724215', 'active');
 
 -- Users (passwords are empty - should be hashed in real implementation)
 INSERT INTO users (name, email, username, password, role, contact, address, branch_id, email_verified, status) VALUES
-('Super Admin', 'admin@oftix.local', 'superadmin', '', 'admin', '09171234567', 'HQ, Metro Manila', NULL, 1, 'active'),
-('Branch Manager - QC', 'admin_qc@oftix.local', 'admin_qc', '', 'branch', '09179876543', 'Quezon City', 1, 1, 'active'),
-('Branch Manager - Makati', 'admin_makati@oftix.local', 'admin_makati', '', 'branch', '09179876544', 'Makati City', 2, 1, 'active'),
-('Branch Manager - Manila', 'admin_manila@oftix.local', 'admin_manila', '', 'branch', '09179876545', 'Manila City', 3, 1, 'active'),
-('Branch Manager - Eastwood', 'admin_eastwood@oftix.local', 'admin_eastwood', '', 'branch', '09179876546', 'Libis, QC', 4, 1, 'active');
+('Super Admin', 'admin@oftix.local', 'superadmin', '$2a$12$0qSNSLTRb/e6fNFcAsCHqu76hfMDgIJiWlDp9.sbF6/CWRHLcWwE2', 'admin', '09171234567', 'HQ, Metro Manila', NULL, 1, 'active'),
+('Branch Manager - QC', 'admin_qc@oftix.local', 'admin_qc', '$2a$12$QDBRHVrOS1uWntnQxOgC.ewatk2IMXfk5NwO9jd9Wq64iB1rlKeCS', 'branch', '09179876543', 'Quezon City', 1, 1, 'active'),
+('Branch Manager - Makati', 'admin_makati@oftix.local', 'admin_makati', '$2a$12$QDBRHVrOS1uWntnQxOgC.ewatk2IMXfk5NwO9jd9Wq64iB1rlKeCS', 'branch', '09179876544', 'Makati City', 2, 1, 'active'),
+('Branch Manager - Manila', 'admin_manila@oftix.local', 'admin_manila', '$2a$12$QDBRHVrOS1uWntnQxOgC.ewatk2IMXfk5NwO9jd9Wq64iB1rlKeCS', 'branch', '09179876545', 'Manila City', 3, 1, 'active'),
+('Branch Manager - Eastwood', 'admin_eastwood@oftix.local', 'admin_eastwood', '$2a$12$QDBRHVrOS1uWntnQxOgC.ewatk2IMXfk5NwO9jd9Wq64iB1rlKeCS', 'branch', '09179876546', 'Libis, QC', 4, 1, 'active');
 
 -- Sample Clients
 INSERT INTO users (name, email, username, password, role, contact, address, branch_id, email_verified, status) VALUES
-('Juan Dela Cruz', 'juan@email.com', 'juandc', '', 'client', '09179991234', 'Quezon City', 1, 1, 'active'),
-('Maria Santos', 'maria@email.com', 'mariasantos', '', 'client', '09179991235', 'Makati City', 2, 1, 'active'),
-('Carlo Mendoza', 'carlo@email.com', 'carlom', '', 'client', '09179991236', 'Quezon City', 1, 1, 'active'),
-('Sofia Tan', 'sofia@email.com', 'sofian', '', 'client', '09179991237', 'Manila City', 3, 1, 'active'),
-('Jerome Bautista', 'jerome@email.com', 'jeromeb', '', 'client', '09179991238', 'Quezon City', 1, 0, 'active'),
-('Gina Lopez', 'gina@email.com', 'ginalopez', '', 'client', '09179991239', 'Makati City', 2, 1, 'active');
+('Juan Dela Cruz', 'juan@email.com', 'juandc', '$2a$12$I9qW0VGzDg.OQ2UZj44MieFgSplojAQ/eHFPGh/6Cmw7CeARQRI7.', 'client', '09179991234', 'Quezon City', 1, 1, 'active'),
+('Maria Santos', 'maria@email.com', 'mariasantos', '$2a$12$I9qW0VGzDg.OQ2UZj44MieFgSplojAQ/eHFPGh/6Cmw7CeARQRI7.', 'client', '09179991235', 'Makati City', 2, 1, 'active'),
+('Carlo Mendoza', 'carlo@email.com', 'carlom', '$2a$12$I9qW0VGzDg.OQ2UZj44MieFgSplojAQ/eHFPGh/6Cmw7CeARQRI7.', 'client', '09179991236', 'Quezon City', 1, 1, 'active'),
+('Sofia Tan', 'sofia@email.com', 'sofian', '$2a$12$I9qW0VGzDg.OQ2UZj44MieFgSplojAQ/eHFPGh/6Cmw7CeARQRI7.', 'client', '09179991237', 'Manila City', 3, 1, 'active'),
+('Jerome Bautista', 'jerome@email.com', 'jeromeb', '$2a$12$I9qW0VGzDg.OQ2UZj44MieFgSplojAQ/eHFPGh/6Cmw7CeARQRI7.', 'client', '09179991238', 'Quezon City', 1, 0, 'active'),
+('Gina Lopez', 'gina@email.com', 'ginalopez', '$2a$12$I9qW0VGzDg.OQ2UZj44MieFgSplojAQ/eHFPGh/6Cmw7CeARQRI7.', 'client', '09179991239', 'Makati City', 2, 1, 'active');
 
 -- Client Profiles
 INSERT INTO clients (user_id, branch_id, status, installation_date) VALUES

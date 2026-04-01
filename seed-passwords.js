@@ -4,11 +4,11 @@ const pool = require('./backend/config/db');
 require('dotenv').config();
 
 const accounts = [
-  { username: 'superadmin',     password: 'Admin@1234' },
-  { username: 'admin_qc',       password: 'Branch@1234' },
-  { username: 'admin_makati',   password: 'Branch@1234' },
-  { username: 'admin_manila',   password: 'Branch@1234' },
-  { username: 'admin_eastwood', password: 'Branch@1234' },
+  { username: 'superadmin',     password: 'superadmin' },
+  { username: 'admin_qc',       password: 'admin' },
+  { username: 'admin_makati',   password: 'admin' },
+  { username: 'admin_manila',   password: 'admin' },
+  { username: 'admin_eastwood', password: 'admin' },
   { username: 'juandc',         password: 'Client@1234' },
   { username: 'mariasantos',    password: 'Client@1234' },
   { username: 'carlom',         password: 'Client@1234' },

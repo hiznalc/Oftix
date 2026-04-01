@@ -9,13 +9,21 @@ const escapeHtml = (str) => {
   return String(str||'').replace(/[&<>"']/g, c => map[c]);
 };
 
-const toast = (msg, type='info', dur=3500) => {
-  let c = document.getElementById('toast-container');
-  if (!c) { c = document.createElement('div'); c.id='toast-container'; document.body.appendChild(c); }
+const toast = (msg, type='info', dur=4000) => {
+  const icons = { success:'✅', danger:'❌', warning:'⚠️', info:'ℹ️' };
+  const colors = {
+    success: 'background:#0a3d1f;border:2px solid #22cc66;color:#afffcb',
+    danger:  'background:#3d0a0a;border:2px solid #ff4444;color:#ffb3b3',
+    warning: 'background:#3d2e00;border:2px solid #ffaa00;color:#ffe599',
+    info:    'background:#0a1f3d;border:2px solid #0099ff;color:#b3d9ff',
+  };
   const el = document.createElement('div');
-  el.className = `toast toast-${type}`;
-  el.textContent = msg;
-  c.appendChild(el);
+  el.style.cssText = `position:fixed;top:20px;right:20px;z-index:9999999;
+    padding:14px 20px;border-radius:12px;font-size:.95rem;font-weight:700;
+    font-family:sans-serif;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.4);
+    ${colors[type]||colors.info}`;
+  el.textContent = (icons[type]||'') + ' ' + msg;
+  document.body.appendChild(el);
   setTimeout(() => el.remove(), dur);
 };
 
@@ -71,21 +79,47 @@ const handleAdminLogin = async (e) => {
   } catch (err) { toast(err.message, 'danger'); }
 };
 
+const setFieldError = (id, msg) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.border = msg ? '1.5px solid #ff4444' : '';
+  let err = el.parentElement.querySelector('.field-err');
+  if (msg) {
+    if (!err) { err = document.createElement('div'); err.className = 'field-err'; err.style.cssText = 'color:#ff6666;font-size:.78rem;margin-top:4px'; el.parentElement.appendChild(err); }
+    err.textContent = '⚠ ' + msg;
+  } else if (err) err.remove();
+};
+const clearFieldErrors = () => document.querySelectorAll('.field-err').forEach(e => e.remove());
+
 const handleRegister = async (e) => {
   e?.preventDefault();
-  const name     = document.getElementById('reg-name')?.value.trim();
-  const email    = document.getElementById('reg-email')?.value.trim();
-  const username = document.getElementById('reg-username')?.value.trim();
-  const password = document.getElementById('reg-pass')?.value;
-  const contact  = document.getElementById('reg-contact')?.value.trim();
-  const address  = document.getElementById('reg-address')?.value.trim();
-  const branch_id = document.getElementById('reg-branch')?.value;
-  if (!name||!email||!username||!password||!branch_id) return toast('Please fill all required fields','danger');
+  clearFieldErrors();
+  const name      = document.getElementById('reg-name')?.value.trim();
+  const email     = document.getElementById('reg-email')?.value.trim();
+  const username  = document.getElementById('reg-username')?.value.trim();
+  const password  = document.getElementById('reg-pass')?.value;
+  const contact   = document.getElementById('reg-contact')?.value.trim();
+  const address   = document.getElementById('reg-address')?.value.trim();
+  const branch_id = parseInt(document.getElementById('reg-branch')?.value, 10) || null;
+
+  let valid = true;
+  if (!name)                          { setFieldError('reg-name','Name is required'); valid=false; }
+  if (!email || !/\S+@\S+\.\S+/.test(email)) { setFieldError('reg-email','Valid email is required'); valid=false; }
+  if (!username || username.length<3) { setFieldError('reg-username','Username must be at least 3 characters'); valid=false; }
+  if (!password || password.length<8) { setFieldError('reg-pass','Password must be at least 8 characters'); valid=false; }
+  if (!branch_id)                     { setFieldError('reg-branch','Please select a branch'); valid=false; }
+  if (!valid) return;
+
   try {
     const result = await request('/auth/register', { method:'POST', body: JSON.stringify({ name, email, username, password, contact, address, branch_id }) });
     toast(result.message, 'success');
     setTimeout(() => { window.location.href = '/'; }, 1200);
-  } catch (err) { toast(err.message, 'danger'); }
+  } catch (err) {
+    // show server errors inline if validation errors returned
+    if (err.message?.toLowerCase().includes('email')) setFieldError('reg-email', err.message);
+    else if (err.message?.toLowerCase().includes('username')) setFieldError('reg-username', err.message);
+    else toast(err.message, 'danger');
+  }
 };
 
 const handleLogout = async () => {
@@ -98,7 +132,7 @@ const loadBranches = async (selectId) => {
   const sel = document.getElementById(selectId);
   if (!sel) return;
   try {
-    const result = await request('/admin/branches');
+    const result = await request('/auth/branches');
     result.data.forEach(b => {
       const opt = document.createElement('option');
       opt.value = b.id; opt.textContent = b.name;
@@ -297,6 +331,8 @@ const loadBranchDashboard = async () => {
     set('stat-tickets', d.total_tickets);
     set('stat-pending', d.pending_apps);
     set('stat-revenue', '₱' + fmt(d.monthly_revenue));
+    const badge = document.getElementById('apps-badge');
+    if (badge) { badge.textContent = d.pending_apps || 0; badge.style.display = d.pending_apps > 0 ? '' : 'none'; }
 
     // Overview recent apps
     const oatb = document.getElementById('overview-apps-tbody');
@@ -309,7 +345,7 @@ const loadBranchDashboard = async () => {
           <td><span class="badge badge-${a.status==='pending'?'warning':a.status==='approved'?'info':'success'}">${escapeHtml(a.status)}</span></td>
           <td>${a.status==='pending'?`<button class="btn btn-success btn-sm" onclick="approveApp(${a.id})">Approve</button>`
             :a.status==='approved'?`<button class="btn btn-warning btn-sm" onclick="scheduleAppModal(${a.id})">Schedule</button>`:'—'}</td>`;
-        btb.appendChild(tr);
+        oatb.appendChild(tr);
       });
     }
 
@@ -353,10 +389,11 @@ const loadBranchDashboard = async () => {
       (paymentsRes.data||[]).forEach(p => {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${escapeHtml(p.client)}</td><td>₱${fmt(p.amount)}</td>
+          <td>${escapeHtml(p.reference_number||'—')}</td>
           <td>${escapeHtml(p.method||'—')}</td><td>${fmtDate(p.payment_date)}</td>
           <td><span class="badge badge-${p.status==='verified'?'success':'warning'}">${escapeHtml(p.status)}</span></td>
           <td>${p.receipt_url?'<span class="badge badge-info">Yes</span>':'—'}</td>
-          <td>${p.status==='pending'?`<button class="btn btn-success btn-sm" onclick="verifyPayment(${p.id})">Verify</button>`:'—'}</td>`;
+          <td id="pay-action-${p.id}">${p.status==='pending'?`<button class="btn btn-success btn-sm" onclick="verifyPayment(${p.id})">Verify</button>`:'—'}</td>`;
         ptb.appendChild(tr);
       });
     }
@@ -421,13 +458,41 @@ window.scheduleAppModal = (id) => {
   document.querySelector('[data-sec="schedule"]')?.click();
 };
 window.verifyPayment = async (id) => {
-  try { await request(`/branch/payments/${id}/verify`, { method:'PUT' }); toast('Payment verified!','success'); loadBranchDashboard(); }
-  catch (err) { toast(err.message,'danger'); }
+  try {
+    await request(`/branch/payments/${id}/verify`, { method:'PUT' });
+    toast('Payment verified!','success');
+    const cell = document.getElementById(`pay-action-${id}`);
+    if (cell) cell.innerHTML = '<span class="badge badge-success">verified ✅</span>';
+  } catch (err) { toast(err.message,'danger'); }
 };
 window.resolveTicket = async (id) => {
   try { await request(`/branch/tickets/${id}`, { method:'PUT', body: JSON.stringify({ status:'resolved' }) }); toast('Ticket resolved!','success'); loadBranchDashboard(); }
   catch (err) { toast(err.message,'danger'); }
 };
+window.selectSlot = (btn, value) => {
+  document.querySelectorAll('#time-slot-btns .slot-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const input = document.getElementById('sched-time');
+  if (input) input.value = value;
+};
+
+window.updateSlotDisplay = () => {
+  const sh = parseInt(document.getElementById('slot-sh')?.value||'9');
+  const sm = document.getElementById('slot-sm')?.value || '00';
+  const sa = document.getElementById('slot-sa')?.value || 'AM';
+  const eh = parseInt(document.getElementById('slot-eh')?.value||'4');
+  const em = document.getElementById('slot-em')?.value || '00';
+  const ea = document.getElementById('slot-ea')?.value || 'PM';
+
+  const to24 = (h, ampm) => ampm==='PM' ? (h===12?12:h+12) : (h===12?0:h);
+  const h24 = to24(sh, sa);
+  const input = document.getElementById('sched-time');
+  if (input) input.value = `${String(h24).padStart(2,'0')}:${sm}:00`;
+
+  const preview = document.getElementById('slot-preview');
+  if (preview) preview.textContent = `🕘 ${String(sh).padStart(2,'0')}:${sm} ${sa} – ${String(eh).padStart(2,'0')}:${em} ${ea}`;
+};
+
 window.addSchedule = async () => {
   const app_id = document.getElementById('sched-app-select')?.value;
   const date   = document.getElementById('sched-date')?.value;
@@ -565,19 +630,53 @@ window.submitApplication = async () => {
   } catch (err) { toast(err.message,'danger'); }
 };
 
-window.submitPayment = async () => {
-  const method = document.getElementById('pay-method')?.value;
-  const ref    = document.querySelector('#gcash-details input[type=text]')?.value.trim();
-  if (!method) return toast('Select a payment method','danger');
-  const methodMap = { gcash: 1, walkin: 3 };
+window.openPaymentModal = async (amount, subscriptionId) => {
+  const amtEl  = document.getElementById('qr-amount-disp');
+  const subEl  = document.getElementById('pay-sub-id');
+  const amtVal = document.getElementById('pay-amount-val');
+  const qrImg  = document.getElementById('qr-img');
+  const qrLoad = document.getElementById('qr-loading');
+  const qrNum  = document.getElementById('qr-gcash-num');
+  const branchEl = document.getElementById('qr-branch-disp');
+  const refEl  = document.getElementById('pay-ref');
+
+  if (refEl)  refEl.value = '';
+  if (subEl)  subEl.value = subscriptionId || '';
+  if (amtVal) amtVal.value = amount || '';
+  if (amtEl)  amtEl.textContent = amount ? `₱${fmt(amount)}` : 'Loading…';
+  if (qrImg)  { qrImg.style.display = 'none'; qrImg.src = ''; }
+  if (qrLoad) { qrLoad.style.display = 'block'; qrLoad.textContent = 'Loading QR code…'; }
+
+  openModal('payment-modal');
+
   try {
-    const subRes = await request('/client/subscription');
-    const amount = subRes.data?.price || 0;
-    await request('/client/payments', { method:'POST', body: JSON.stringify({ payment_method_id: methodMap[method]||1, reference_number: ref||null, amount }) });
-    toast('Payment submitted! Awaiting verification.','success');
+    const res = await request('/client/payments/qr');
+    const { qr, gcash_number, branch_name, amount: apiAmount } = res.data;
+    if (qrLoad) qrLoad.style.display = 'none';
+    if (qrImg)  { qrImg.src = qr; qrImg.style.display = 'inline-block'; }
+    if (qrNum)  qrNum.textContent = gcash_number || '—';
+    if (branchEl) branchEl.textContent = branch_name || '—';
+    if (apiAmount) {
+      if (amtEl)  amtEl.textContent = `₱${fmt(apiAmount)}`;
+      if (amtVal) amtVal.value = apiAmount;
+    }
+  } catch (err) {
+    if (qrLoad) { qrLoad.style.display = 'block'; qrLoad.textContent = 'Failed to load QR. Please try again.'; }
+    if (qrImg)  qrImg.style.display = 'none';
+  }
+};
+
+window.submitPayment = async () => {
+  const ref = document.getElementById('pay-ref')?.value.trim();
+  const subId = document.getElementById('pay-sub-id')?.value;
+  const amount = document.getElementById('pay-amount-val')?.value;
+  if (!ref) return toast('Enter your GCash reference number', 'danger');
+  try {
+    await request('/client/payments', { method: 'POST', body: JSON.stringify({ payment_method_id: 1, reference_number: ref, amount: parseFloat(amount) || 0 }) });
+    toast('Payment submitted! Awaiting verification.', 'success');
     closeModal('payment-modal');
     loadClientPayments();
-  } catch (err) { toast(err.message,'danger'); }
+  } catch (err) { toast(err.message, 'danger'); }
 };
 
 window.submitTicket = async () => {
@@ -593,15 +692,28 @@ window.submitTicket = async () => {
   } catch (err) { toast(err.message,'danger'); }
 };
 
-// payment method toggle
-document.addEventListener('change', (e) => {
-  if (e.target.id === 'pay-method') {
-    const gd = document.getElementById('gcash-details');
-    const wd = document.getElementById('walkin-details');
-    if (gd) gd.style.display = e.target.value==='gcash'?'block':'none';
-    if (wd) wd.style.display = e.target.value==='walkin'?'block':'none';
+// ── Theme toggle (admin & branch dashboards) ──────────────────────────────────
+
+window.toggleTheme = () => {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') !== 'light';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.textContent = isDark ? '🌙' : '☀️';
+  localStorage.setItem('oftix-theme', isDark ? 'light' : 'dark');
+};
+
+// restore saved theme on load
+(()=>{
+  const saved = localStorage.getItem('oftix-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) btn.textContent = saved === 'light' ? '🌙' : '☀️';
+    });
   }
-});
+})();
 
 // ── Route guard ───────────────────────────────────────────────────────────────
 
@@ -723,6 +835,43 @@ document.addEventListener('click', (e) => {
 });
 
 // ── All Payments search & export ──────────────────────────────────────────────
+
+// ── Generic table search & export ─────────────────────────────────────────────
+
+window.filterTbl = (input, tbodyId) => {
+  const term = input.value.toLowerCase();
+  document.querySelectorAll(`#${tbodyId} tr`).forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(term) ? '' : 'none';
+  });
+};
+
+window.exportTbl = (tbodyId, filename) => {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  const headers = Array.from(tbody.closest('table').querySelectorAll('thead th')).map(th => th.textContent.trim());
+  const rows = Array.from(tbody.querySelectorAll('tr'))
+    .filter(r => r.style.display !== 'none')
+    .map(r => Array.from(r.querySelectorAll('td')).map(td => `"${td.textContent.trim().replace(/"/g,'""')}"`));
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `${filename}.csv`; a.click();
+};
+
+window.exportTblPdf = (tbodyId, title) => {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  const headers = Array.from(tbody.closest('table').querySelectorAll('thead th')).map(th => th.textContent.trim());
+  const rows = Array.from(tbody.querySelectorAll('tr'))
+    .filter(r => r.style.display !== 'none')
+    .map(r => `<tr>${Array.from(r.querySelectorAll('td')).map(td => `<td>${td.textContent.trim()}</td>`).join('')}</tr>`);
+  const win = window.open('', '_blank');
+  win.document.write(`<html><head><title>${title}</title>
+    <style>body{font-family:sans-serif;padding:20px}h2{margin-bottom:4px}p{font-size:12px;color:#666;margin-bottom:16px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:7px 10px;font-size:12px}th{background:#003db3;color:#fff}</style></head>
+    <body><h2>Oftix Network — ${title}</h2><p>Generated: ${new Date().toLocaleString()}</p>
+    <table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>
+    <script>window.print();<\/script></body></html>`);
+};
 
 window.filterPayments = (q) => {
   const term = q.toLowerCase();

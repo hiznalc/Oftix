@@ -3,7 +3,17 @@ const { body } = require('express-validator');
 const authController = require('../controllers/authController');
 const { validateRequest } = require('../middleware/validate');
 
+const pool = require('../config/db');
+
 const router = express.Router();
+
+// Public — branch list for registration form
+router.get('/branches', async (req, res, next) => {
+  try {
+    const [rows] = await pool.execute("SELECT id, name, location FROM branches WHERE status = 'active' ORDER BY name ASC");
+    res.json({ success: true, data: rows });
+  } catch (err) { next(err); }
+});
 
 router.post('/register', [
   body('name').trim().notEmpty().withMessage('Name is required'),

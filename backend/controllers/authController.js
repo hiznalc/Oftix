@@ -76,31 +76,50 @@ const verifyEmail = async (req, res, next) => {
 const login = async (req, res, next) => {
   const { username, password, role } = req.body;
   try {
-    const [rows] = await pool.execute('SELECT id,name,email,role,branch_id,password,email_verified FROM users WHERE username = ? OR email = ?', [username, username]);
+    const [rows] = await pool.execute(
+      'SELECT id,name,email,role,branch_id,password,email_verified,status FROM users WHERE username = ? OR email = ?',
+      [username, username]);
+
+    const logAttempt = async (userId, status) => {
+      await pool.execute(
+        'INSERT INTO login_logs (user_id, username, ip_address, user_agent, status) VALUES (?,?,?,?,?)',
+        [userId || null, username, req.ip, req.headers['user-agent'] || null, status]);
+    };
+
     if (!rows.length) {
+      await logAttempt(null, 'failed');
       logger.warn({ event: 'login_fail', reason: 'user_not_found', username, ip: req.ip });
       return res.status(401).json({ success: false, message: 'Invalid credentials.' });
     }
     const user = rows[0];
+
     if (!(await bcrypt.compare(password, user.password))) {
+      await logAttempt(user.id, 'failed');
       logger.warn({ event: 'login_fail', reason: 'wrong_password', username, ip: req.ip });
       return res.status(401).json({ success: false, message: 'Invalid credentials.' });
     }
+    if (user.status === 'suspended') {
+      await logAttempt(user.id, 'failed');
+      return res.status(403).json({ success: false, message: 'Account suspended. Contact support.' });
+    }
     if (role && user.role !== role) {
+      await logAttempt(user.id, 'failed');
       logger.warn({ event: 'login_fail', reason: 'role_mismatch', username, ip: req.ip });
       return res.status(403).json({ success: false, message: 'Role mismatch.' });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role, branch_id: user.branch_id || null }, jwtSecret, { expiresIn: jwtExpiry });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, branch_id: user.branch_id || null },
+      jwtSecret, { expiresIn: jwtExpiry });
     createCookie(token, res);
+    await logAttempt(user.id, 'success');
     logger.info({ event: 'login_success', userId: user.id, role: user.role, ip: req.ip });
 
     return res.json(createAuthResponse(user));
   } catch (error) {
     next(error);
   }
-};
-
+}
 const logout = async (_, res) => {
   res.clearCookie('token');
   return res.json({ success: true, message: 'Logged out successfully.' });

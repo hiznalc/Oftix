@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const QRCode = require('qrcode');
 
 const dashboard = async (req, res, next) => {
   try {
@@ -45,6 +46,23 @@ const getSubscription = async (req, res, next) => {
        FROM subscriptions s JOIN plans p ON p.id = s.plan_id
        WHERE s.client_id = ? AND s.status = 'active' LIMIT 1`, [clients[0].id]);
     return res.json({ success: true, data: subs[0] || null });
+  } catch (error) { next(error); }
+};
+
+const getPaymentQR = async (req, res, next) => {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT b.gcash_number, b.name AS branch_name, p.price
+       FROM clients c
+       JOIN branches b ON b.id = c.branch_id
+       LEFT JOIN subscriptions s ON s.client_id = c.id AND s.status = 'active'
+       LEFT JOIN plans p ON p.id = s.plan_id
+       WHERE c.user_id = ? LIMIT 1`, [req.user.id]);
+    if (!rows.length) return res.status(404).json({ success: false, message: 'No client record found.' });
+    const { gcash_number, branch_name, price } = rows[0];
+    const deepLink = `gcash://pay?number=${gcash_number}&amount=${price || ''}`;
+    const qr = await QRCode.toDataURL(deepLink);
+    return res.json({ success: true, data: { qr, gcash_number, branch_name, amount: price } });
   } catch (error) { next(error); }
 };
 
@@ -125,4 +143,4 @@ const getPlans = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-module.exports = { dashboard, getProfile, updateProfile, getSubscription, getPayments, submitPayment, getTickets, submitTicket, applyConnection, getPlans };
+module.exports = { dashboard, getProfile, updateProfile, getSubscription, getPaymentQR, getPayments, submitPayment, getTickets, submitTicket, applyConnection, getPlans };
