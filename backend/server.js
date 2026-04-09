@@ -61,14 +61,16 @@ app.use('/api/client', clientRoutes);
 app.get('/api/health', (req, res) => res.json({ success: true, message: 'API is healthy.' }));
 
 // Serve HTML pages (must be after API routes to avoid conflicts)
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'oftix-landing-v4-final-animated.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html')));
+app.get('/index.html', (req, res) => res.redirect('/login'));
 app.get('/register.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'register.html')));
 app.get('/admin-dashboard.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'admin-dashboard.html')));
 app.get('/branch-dashboard.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'branch-dashboard.html')));
 app.get('/client-dashboard.html', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'client-dashboard.html')));
 
 // Fallback for any other requests to index.html (SPA-like routing)
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'index.html')));
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, '..', 'frontend', 'pages', 'oftix-landing-v4-final-animated.html')));
 
 app.use(handleErrors);
 

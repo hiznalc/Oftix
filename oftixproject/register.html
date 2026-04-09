@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oftix Network Inc. — Register</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<canvas id="login-fiber-canvas"></canvas>
+<div id="toast-container"></div>
+<div class="login-bg" style="padding:40px 24px;align-items:flex-start">
+  <div style="max-width:540px;width:100%;margin:0 auto;position:relative;z-index:1">
+    <div class="login-card">
+
+      <!-- Logo + Motto -->
+      <div style="text-align:center;margin-bottom:24px">
+        <img src="oftix-logo-anim.svg" alt="Oftix Network" style="width:440px;max-width:88vw;height:auto;object-fit:contain;margin-bottom:6px"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+        <div style="display:none;font-family:'Orbitron',sans-serif;font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,#0055e5,#00c8f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px">OFTiX</div>
+        <p class="motto-text" style="font-family:'Nunito',sans-serif;margin-bottom:14px">
+          "Built on fiber. Driven by speed. Trusted by thousands — because every connection you make matters."
+        </p>
+        <h2 style="font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:900;color:#182848;margin-bottom:4px">
+          Create Your Subscriber Account
+        </h2>
+        <p style="font-size:.92rem;color:#4a6494">Apply for internet service in just a few steps</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="fg-lt" style="margin-bottom:0">
+          <label class="fl-lt">Full Name <span style="color:var(--danger)">*</span></label>
+          <input type="text" class="inp-lt" id="reg-name" placeholder="Juan dela Cruz"/>
+        </div>
+        <div class="fg-lt" style="margin-bottom:0">
+          <label class="fl-lt">Contact Number <span style="color:var(--danger)">*</span></label>
+          <input type="tel" class="inp-lt" id="reg-contact" placeholder="09XX-XXX-XXXX"/>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+      <div class="fg-lt">
+        <label class="fl-lt">Email Address <span style="color:var(--danger)">*</span></label>
+        <input type="email" class="inp-lt" id="reg-email" placeholder="juan@email.com"/>
+      </div>
+      <div class="fg-lt">
+        <label class="fl-lt">Complete Address <span style="color:var(--danger)">*</span></label>
+        <input type="text" class="inp-lt" id="reg-address" placeholder="House No., Street, Barangay, City"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="fg-lt" style="margin-bottom:0">
+          <label class="fl-lt">Username <span style="color:var(--danger)">*</span></label>
+          <input type="text" class="inp-lt" id="reg-username" placeholder="juan123" autocomplete="username"/>
+        </div>
+        <div class="fg-lt" style="margin-bottom:0">
+          <label class="fl-lt">Password <span style="color:var(--danger)">*</span></label>
+          <input type="password" class="inp-lt" id="reg-pass" placeholder="Create a strong password" autocomplete="new-password"/>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+      <div class="fg-lt">
+        <label class="fl-lt">Nearest Branch <span style="color:var(--danger)">*</span></label>
+        <select class="inp-lt" id="reg-branch">
+          <option value="" disabled selected>— Select your nearest branch —</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary-lt btn-full" id="reg-submit" style="margin-bottom:16px">
+        Create Account →
+      </button>
+
+      <p style="text-align:center;font-size:.96rem;color:#4a6494">
+        Already registered?
+        <a href="index.html" style="color:#0055e5;font-weight:800">Sign in here</a>
+      </p>
+      <p style="text-align:center;font-size:.76rem;color:#b8ccee;margin-top:12px;line-height:1.7">
+        By registering, you agree to our
+        <a href="#" style="color:#8aa4cc">Terms of Service</a> &amp;
+        <a href="#" style="color:#8aa4cc">Privacy Policy</a>
+      </p>
+
+    </div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

@@ -14,7 +14,8 @@ A secure, role-based full-stack billing and dashboard system for Internet Servic
 | Security | Helmet (CSP), CORS, express-rate-limit, express-validator |
 | Logging  | Winston, Morgan                                 |
 | Frontend | Vanilla HTML/CSS/JS (Bootstrap 5)               |
-| QR Code  | qrcode (GCash deep link generation)             |
+| QR Code  | qrcode (client-side, from qrcode.js CDN)        |
+| Payments | PayMongo API (payment links, auto-verification)  |
 
 ---
 
@@ -57,6 +58,8 @@ npm run dev
 | `BCRYPT_ROUNDS`       | bcrypt cost factor               | `12`                     |
 | `FRONTEND_ORIGIN`     | Allowed CORS origin              | `http://localhost:3000`  |
 | `NODE_ENV`            | Environment                      | `development`            |
+| `PAYMONGO_SECRET_KEY` | PayMongo secret key              | —                        |
+| `PAYMONGO_PUBLIC_KEY` | PayMongo public key              | —                        |
 
 ---
 
@@ -157,19 +160,21 @@ Oftix/
 | POST   | /api/branch/schedule               | Add schedule entry        |
 
 ### Client (role: client)
-| Method | Route                     | Description                        |
-|--------|---------------------------|------------------------------------|
-| GET    | /api/client/dashboard     | Client dashboard                   |
-| GET    | /api/client/profile       | Get profile                        |
-| PUT    | /api/client/profile       | Update profile                     |
-| GET    | /api/client/subscription  | Active subscription                |
-| GET    | /api/client/payments/qr   | GCash QR code + branch info        |
-| GET    | /api/client/payments      | Payment history                    |
-| POST   | /api/client/payments      | Submit payment (with reference #)  |
-| GET    | /api/client/tickets       | My tickets                         |
-| POST   | /api/client/tickets       | Submit ticket                      |
-| POST   | /api/client/apply         | Apply for connection               |
-| GET    | /api/client/plans         | Available plans                    |
+| Method | Route                     | Description                           |
+|--------|---------------------------|---------------------------------------|
+| GET    | /api/client/dashboard     | Client dashboard                      |
+| GET    | /api/client/profile       | Get profile                           |
+| PUT    | /api/client/profile       | Update profile                        |
+| GET    | /api/client/subscription  | Active subscription                   |
+| GET    | /api/client/payments/qr   | PayMongo QR code (legacy)             |
+| GET    | /api/client/payments      | Payment history                       |
+| POST   | /api/client/payments      | Submit payment (with reference #)     |
+| POST   | /api/client/payments/link | Create PayMongo payment link          |
+| GET    | /api/client/payments/link/:id | Check PayMongo payment status     |
+| GET    | /api/client/tickets       | My tickets                            |
+| POST   | /api/client/tickets       | Submit ticket                         |
+| POST   | /api/client/apply         | Apply for connection                  |
+| GET    | /api/client/plans         | Available plans                       |
 
 ### Health (Public)
 | Method | Route       | Description  |
@@ -208,10 +213,13 @@ Oftix/
 ## Features
 
 ### Payment
-- GCash QR code generated via `gcash://pay?number=...&amount=...` deep link
-- Client scans QR → GCash app opens with pre-filled number and amount
-- Client submits GCash reference number after payment
-- Branch admin verifies payment per row
+- Client clicks "Pay Now" → modal opens with **Generate PayMongo Payment** button
+- Clicking it creates a real PayMongo payment link via the API
+- QR code generated client-side from the checkout URL
+- Client scans QR or clicks the link → pays on PayMongo's hosted checkout page
+- System polls PayMongo every 5 seconds → auto-verifies payment in DB when confirmed
+- Manual reference number input available as fallback
+- Branch admin can also manually verify payments from the Payments section
 
 ### Dashboards
 - **Dark / Light mode** toggle on all dashboards (preference saved to localStorage)
@@ -244,8 +252,8 @@ Oftix/
 
 ## Scripts
 
-| Command                | Description                              |
-|------------------------|------------------------------------------|
-| `npm start`            | Start server (production)                |
-| `npm run dev`          | Start with nodemon (auto-reload)         |
-| `node seed-passwords.js` | Re-hash and update all sample passwords |
+| Command                  | Description                              |
+|--------------------------|------------------------------------------|
+| `npm start`              | Start server (production)                |
+| `npm run dev`            | Start with nodemon (auto-reload)         |
+| `node seed-passwords.js` | Re-hash and update all sample passwords  |

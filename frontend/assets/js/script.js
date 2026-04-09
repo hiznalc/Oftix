@@ -182,10 +182,10 @@ const loadAdminDashboard = async () => {
       branches.forEach(b => {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${escapeHtml(b.name)}</td><td>${escapeHtml(b.location)}</td>
-          <td>${escapeHtml(b.gcash_number||'—')}</td>
+          <td>${escapeHtml(b.paymongo_number||'—')}</td>
           <td>${clients.filter(c=>c.branch===b.name).length}</td>
           <td><span class="badge badge-${b.status==='active'?'success':'warning'}">${escapeHtml(b.status)}</span></td>
-          <td><button class="btn btn-sm btn-outline-dk" onclick="editBranch(${b.id},'${escapeHtml(b.name)}','${escapeHtml(b.location)}','${escapeHtml(b.gcash_number||'')}')">Edit</button>
+          <td><button class="btn btn-sm btn-outline-dk" onclick="editBranch(${b.id},'${escapeHtml(b.name)}','${escapeHtml(b.location)}','${escapeHtml(b.paymongo_number||'')}')">Edit</button>
           <button class="btn btn-sm btn-danger-dk" onclick="deleteBranch(${b.id})">Delete</button></td>`;
         btb.appendChild(tr);
       });
@@ -261,24 +261,24 @@ const loadAdminDashboard = async () => {
 window.addBranch = async () => {
   const name = document.getElementById('new-branch-name')?.value.trim();
   const location = document.getElementById('new-branch-address')?.value.trim();
-  const gcash_number = document.getElementById('new-branch-gcash')?.value.trim();
+  const paymongo_number = document.getElementById('new-branch-paymongo')?.value.trim();
   if (!name || !location) return toast('Name and address required', 'danger');
   try {
-    await request('/admin/branches', { method:'POST', body: JSON.stringify({ name, location, gcash_number }) });
+    await request('/admin/branches', { method:'POST', body: JSON.stringify({ name, location, paymongo_number }) });
     toast('Branch created!', 'success');
     closeModal('add-branch-modal');
     loadAdminDashboard();
   } catch (err) { toast(err.message, 'danger'); }
 };
 
-window.editBranch = (id, name, location, gcash) => {
+window.editBranch = (id, name, location, paymongo) => {
   document.getElementById('new-branch-name').value = name;
   document.getElementById('new-branch-address').value = location;
-  document.getElementById('new-branch-gcash').value = gcash;
+  document.getElementById('new-branch-paymongo').value = paymongo;
   const btn = document.querySelector('#add-branch-modal .btn-primary-dk');
   if (btn) { btn.textContent = '✅ Update Branch'; btn.onclick = async () => {
     try {
-      await request(`/admin/branches/${id}`, { method:'PUT', body: JSON.stringify({ name: document.getElementById('new-branch-name').value, location: document.getElementById('new-branch-address').value, gcash_number: document.getElementById('new-branch-gcash').value }) });
+      await request(`/admin/branches/${id}`, { method:'PUT', body: JSON.stringify({ name: document.getElementById('new-branch-name').value, location: document.getElementById('new-branch-address').value, paymongo_number: document.getElementById('new-branch-paymongo').value }) });
       toast('Branch updated!', 'success'); closeModal('add-branch-modal'); loadAdminDashboard();
     } catch (err) { toast(err.message, 'danger'); }
   }; }
@@ -504,7 +504,7 @@ window.addSchedule = async () => {
     toast('Scheduled!','success'); loadBranchDashboard();
   } catch (err) { toast(err.message,'danger'); }
 };
-window.saveGCash = () => toast('GCash settings saved!','success');
+window.savePayMongo = () => toast('PayMongo settings saved!','success');
 
 // ── Client Dashboard ──────────────────────────────────────────────────────────
 
@@ -630,39 +630,77 @@ window.submitApplication = async () => {
   } catch (err) { toast(err.message,'danger'); }
 };
 
-window.openPaymentModal = async (amount, subscriptionId) => {
-  const amtEl  = document.getElementById('qr-amount-disp');
-  const subEl  = document.getElementById('pay-sub-id');
-  const amtVal = document.getElementById('pay-amount-val');
-  const qrImg  = document.getElementById('qr-img');
-  const qrLoad = document.getElementById('qr-loading');
-  const qrNum  = document.getElementById('qr-gcash-num');
-  const branchEl = document.getElementById('qr-branch-disp');
-  const refEl  = document.getElementById('pay-ref');
-
-  if (refEl)  refEl.value = '';
+window.openPaymentModal = (amount, subscriptionId) => {
+  const step1 = document.getElementById('pm-step1');
+  const step2 = document.getElementById('pm-step2');
+  const btn   = document.getElementById('paymongo-link-btn');
+  const subEl = document.getElementById('pay-sub-id');
+  const amtVal= document.getElementById('pay-amount-val');
+  const refEl = document.getElementById('pay-ref');
+  if (step1) step1.style.display = 'block';
+  if (step2) step2.style.display = 'none';
+  if (btn)   { btn.disabled = false; btn.textContent = '⚡ Generate PayMongo Payment'; }
   if (subEl)  subEl.value = subscriptionId || '';
   if (amtVal) amtVal.value = amount || '';
-  if (amtEl)  amtEl.textContent = amount ? `₱${fmt(amount)}` : 'Loading…';
-  if (qrImg)  { qrImg.style.display = 'none'; qrImg.src = ''; }
-  if (qrLoad) { qrLoad.style.display = 'block'; qrLoad.textContent = 'Loading QR code…'; }
-
+  if (refEl)  refEl.value = '';
   openModal('payment-modal');
+};
+
+
+window.payWithPayMongo = async () => {
+  const btn = document.getElementById('paymongo-link-btn');
+  const step1 = document.getElementById('pm-step1');
+  const step2 = document.getElementById('pm-step2');
+  const qrImg = document.getElementById('qr-img');
+  const qrLoad = document.getElementById('qr-loading');
+  const linkStatus = document.getElementById('paymongo-link-status');
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating…'; }
 
   try {
-    const res = await request('/client/payments/qr');
-    const { qr, gcash_number, branch_name, amount: apiAmount } = res.data;
-    if (qrLoad) qrLoad.style.display = 'none';
-    if (qrImg)  { qrImg.src = qr; qrImg.style.display = 'inline-block'; }
-    if (qrNum)  qrNum.textContent = gcash_number || '—';
-    if (branchEl) branchEl.textContent = branch_name || '—';
-    if (apiAmount) {
-      if (amtEl)  amtEl.textContent = `₱${fmt(apiAmount)}`;
-      if (amtVal) amtVal.value = apiAmount;
+    const res = await request('/client/payments/link', { method: 'POST' });
+    const { checkout_url, payment_link_id } = res.data;
+
+    // switch to step 2
+    if (step1) step1.style.display = 'none';
+    if (step2) step2.style.display = 'block';
+
+    // generate QR from checkout URL
+    if (linkStatus) linkStatus.innerHTML = `<a href="${checkout_url}" target="_blank" style="color:var(--cli-accent);font-weight:700;word-break:break-all">🔗 Open PayMongo Payment Page</a>`;
+
+    // use qrcode.js CDN to generate QR client-side
+    if (window.QRCode) {
+      if (qrLoad) qrLoad.style.display = 'none';
+      if (qrImg) { qrImg.src = ''; qrImg.style.display = 'none'; }
+      const canvas = document.createElement('canvas');
+      window.QRCode.toCanvas(canvas, checkout_url, { width: 200 }, (err) => {
+        if (!err && qrLoad) {
+          qrLoad.parentElement.insertBefore(canvas, qrLoad);
+          canvas.style.borderRadius = '12px';
+          qrLoad.style.display = 'none';
+        }
+      });
+    } else {
+      if (qrLoad) { qrLoad.style.display = 'none'; }
+      if (qrImg) { qrImg.style.display = 'none'; }
     }
+
+    // poll for payment confirmation every 5s
+    const poll = setInterval(async () => {
+      try {
+        const check = await request(`/client/payments/link/${payment_link_id}`);
+        if (check.data.paid) {
+          clearInterval(poll);
+          toast('Payment confirmed! ✅', 'success');
+          closeModal('payment-modal');
+          loadClientPayments();
+        }
+      } catch { clearInterval(poll); }
+    }, 5000);
+
   } catch (err) {
-    if (qrLoad) { qrLoad.style.display = 'block'; qrLoad.textContent = 'Failed to load QR. Please try again.'; }
-    if (qrImg)  qrImg.style.display = 'none';
+    toast(err.message, 'danger');
+    if (btn) { btn.disabled = false; btn.textContent = '⚡ Generate PayMongo Payment'; }
   }
 };
 
@@ -670,7 +708,7 @@ window.submitPayment = async () => {
   const ref = document.getElementById('pay-ref')?.value.trim();
   const subId = document.getElementById('pay-sub-id')?.value;
   const amount = document.getElementById('pay-amount-val')?.value;
-  if (!ref) return toast('Enter your GCash reference number', 'danger');
+  if (!ref) return toast('Enter your PayMongo reference number', 'danger');
   try {
     await request('/client/payments', { method: 'POST', body: JSON.stringify({ payment_method_id: 1, reference_number: ref, amount: parseFloat(amount) || 0 }) });
     toast('Payment submitted! Awaiting verification.', 'success');

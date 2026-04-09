@@ -11,7 +11,7 @@ CREATE TABLE branches (
   name VARCHAR(255) NOT NULL,
   location VARCHAR(255) NOT NULL,
   admin_id INT NULL,
-  gcash_number VARCHAR(50) COMMENT 'GCash payment number for branch',
+  gcash_number VARCHAR(50) COMMENT 'PayMongo number for branch',
   status ENUM('active','inactive') DEFAULT 'active',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -136,7 +136,7 @@ CREATE TABLE installation_schedule (
 
 CREATE TABLE payment_methods (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL UNIQUE COMMENT 'e.g., GCash, Bank Transfer, etc.',
+  name VARCHAR(100) NOT NULL UNIQUE COMMENT 'e.g., PayMongo, Bank Transfer, etc.',
   description TEXT,
   is_active TINYINT(1) DEFAULT 1,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -149,7 +149,7 @@ CREATE TABLE payments (
   branch_id INT NOT NULL,
   amount DECIMAL(10,2) NOT NULL,
   payment_method_id INT,
-  reference_number VARCHAR(100) COMMENT 'GCash ref, bank receipt, etc.',
+  reference_number VARCHAR(100) COMMENT 'PayMongo ref, bank receipt, etc.',
   status ENUM('pending','verified','failed','refunded') DEFAULT 'pending',
   payment_date DATETIME,
   verified_date DATETIME,
@@ -242,7 +242,7 @@ CREATE TABLE login_logs (
 
 -- Payment Methods
 INSERT INTO payment_methods (name, description, is_active) VALUES
-('GCash', 'Mobile payment via GCash', 1),
+('PayMongo', 'Mobile payment via PayMongo', 1),
 ('Bank Transfer', 'Direct bank deposit', 1),
 ('Cash', 'In-person payment at branch office', 1),
 ('Online Credit Card', 'Credit/Debit card (Stripe/PayMo)', 1);

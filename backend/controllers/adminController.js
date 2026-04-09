@@ -48,19 +48,19 @@ const getBranches = async (req, res, next) => {
 };
 
 const createBranch = async (req, res, next) => {
-  const { name, location, gcash_number } = req.body;
+  const { name, location, paymongo_number } = req.body;
   try {
-    await pool.execute('INSERT INTO branches (name, location, gcash_number) VALUES (?, ?, ?)', [name, location, gcash_number || null]);
+    await pool.execute('INSERT INTO branches (name, location, paymongo_number) VALUES (?, ?, ?)', [name, location, paymongo_number || null]);
     return res.status(201).json({ success: true, message: 'Branch created.' });
   } catch (error) { next(error); }
 };
 
 const updateBranch = async (req, res, next) => {
   const { id } = req.params;
-  const { name, location, gcash_number, status } = req.body;
+  const { name, location, paymongo_number, status } = req.body;
   try {
-    await pool.execute('UPDATE branches SET name=?, location=?, gcash_number=?, status=? WHERE id=?',
-      [name, location, gcash_number || null, status || 'active', id]);
+    await pool.execute('UPDATE branches SET name=?, location=?, paymongo_number=?, status=? WHERE id=?',
+      [name, location, paymongo_number || null, status || 'active', id]);
     return res.json({ success: true, message: 'Branch updated.' });
   } catch (error) { next(error); }
 };

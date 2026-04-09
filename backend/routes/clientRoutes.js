@@ -8,6 +8,8 @@ const router = express.Router();
 router.use(verifyToken, requireRole(['client']));
 
 router.get('/payments/qr', c.getPaymentQR);
+router.post('/payments/link', c.createPaymentLink);
+router.get('/payments/link/:linkId', c.checkPaymentLink);
 
 router.get('/dashboard', c.dashboard);
 router.get('/profile', c.getProfile);

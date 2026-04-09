@@ -1,5 +1,6 @@
 const pool = require('../config/db');
 const QRCode = require('qrcode');
+const { createPaymentLink: pmCreateLink, getPaymentLink: pmGetLink } = require('../services/paymongoService');
 
 const dashboard = async (req, res, next) => {
   try {
@@ -60,9 +61,57 @@ const getPaymentQR = async (req, res, next) => {
        WHERE c.user_id = ? LIMIT 1`, [req.user.id]);
     if (!rows.length) return res.status(404).json({ success: false, message: 'No client record found.' });
     const { gcash_number, branch_name, price } = rows[0];
-    const deepLink = `gcash://pay?number=${gcash_number}&amount=${price || ''}`;
+    const deepLink = `paymongo://pay?number=${gcash_number}&amount=${price || ''}`;
     const qr = await QRCode.toDataURL(deepLink);
     return res.json({ success: true, data: { qr, gcash_number, branch_name, amount: price } });
+  } catch (error) { next(error); }
+};
+
+const createPaymentLink = async (req, res, next) => {
+  try {
+    const [clients] = await pool.execute(
+      `SELECT c.id, c.branch_id, s.id as sub_id, p.price, p.name as plan_name
+       FROM clients c
+       JOIN subscriptions s ON s.client_id = c.id AND s.status = 'active'
+       JOIN plans p ON p.id = s.plan_id
+       WHERE c.user_id = ? LIMIT 1`, [req.user.id]);
+    if (!clients.length) return res.status(400).json({ success: false, message: 'No active subscription.' });
+    const { id: client_id, sub_id, price, plan_name, branch_id } = clients[0];
+
+    const link = await pmCreateLink(
+      price,
+      `Oftix ${plan_name} — Monthly Bill`,
+      { client_id, subscription_id: sub_id }
+    );
+
+    // save pending payment record
+    await pool.execute(
+      "INSERT INTO payments (subscription_id, client_id, branch_id, amount, payment_method_id, reference_number, status, payment_date) VALUES (?,?,?,?,1,?,  'pending', NOW())",
+      [sub_id, client_id, branch_id, price, link.payment_link_id]);
+
+    return res.json({ success: true, data: link });
+  } catch (error) { next(error); }
+};
+
+const checkPaymentLink = async (req, res, next) => {
+  try {
+    const link = await pmGetLink(req.params.linkId);
+    const isPaid = link.attributes.status === 'paid';
+
+    if (isPaid) {
+      // auto-verify the payment in DB
+      await pool.execute(
+        "UPDATE payments SET status='verified', verified_date=NOW() WHERE reference_number=?",
+        [req.params.linkId]);
+      await pool.execute(
+        `UPDATE subscriptions s
+         JOIN payments p ON p.subscription_id = s.id
+         SET s.payment_status='paid'
+         WHERE p.reference_number=?`,
+        [req.params.linkId]);
+    }
+
+    return res.json({ success: true, data: { status: link.attributes.status, paid: isPaid } });
   } catch (error) { next(error); }
 };
 
@@ -143,4 +192,4 @@ const getPlans = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-module.exports = { dashboard, getProfile, updateProfile, getSubscription, getPaymentQR, getPayments, submitPayment, getTickets, submitTicket, applyConnection, getPlans };
+module.exports = { dashboard, getProfile, updateProfile, getSubscription, getPaymentQR, createPaymentLink, checkPaymentLink, getPayments, submitPayment, getTickets, submitTicket, applyConnection, getPlans };

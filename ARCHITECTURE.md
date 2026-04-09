@@ -33,17 +33,23 @@
 │                                                             │
 │  Auth middleware:  verifyToken → requireRole                │
 │  Error middleware: handleErrors (last)                      │
-└────────────────────────┬────────────────────────────────────┘
-                         │ mysql2 promise pool
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    MySQL 8 Database                         │
-│                                                             │
-│  branches · users · clients · plans · subscriptions         │
-│  applications · installation_schedule · payment_methods     │
-│  payments · tickets · ticket_replies                        │
-│  password_resets · login_logs                               │
-└─────────────────────────────────────────────────────────────┘
+└──────────────┬─────────────────────────┬───────────────────┘
+               │ mysql2 pool             │ axios
+               ▼                         ▼
+┌──────────────────────┐   ┌─────────────────────────────────┐
+│   MySQL 8 Database   │   │     PayMongo API                │
+│                      │   │  api.paymongo.com/v1            │
+│  branches · users    │   │  POST /links → checkout_url     │
+│  clients · plans     │   │  GET  /links/:id → status       │
+│  subscriptions       │   └─────────────────────────────────┘
+│  applications        │
+│  installation_schedule
+│  payment_methods     │
+│  payments · tickets  │
+│  ticket_replies      │
+│  password_resets     │
+│  login_logs          │
+└──────────────────────┘
 ```
 
 ## Roles
@@ -77,23 +83,47 @@ POST /forgot-password → generate UUID token → INSERT password_resets (expire
 POST /reset-password  → validate token + expiry + used=0 → bcrypt hash → UPDATE password → mark used=1
 ```
 
-## GCash Payment Flow
+## PayMongo Payment Flow
 
 ```
-Client clicks Pay Now → GET /api/client/payments/qr
-  → JOIN clients → branches → subscriptions → plans
-  → build gcash://pay?number=<gcash_number>&amount=<price>
-  → QRCode.toDataURL(deepLink) → return { qr, gcash_number, branch_name, amount }
+Client clicks Pay Now → modal opens (Step 1: Generate button only)
          ↓
-Client scans QR with GCash app → pays → gets reference number
+Client clicks "Generate PayMongo Payment"
+  → POST /api/client/payments/link
+  → JOIN clients → subscriptions → plans → get amount
+  → PayMongo API: POST /v1/links → returns { checkout_url, payment_link_id }
+  → INSERT payments (status=pending, reference_number=payment_link_id)
          ↓
-Client submits reference number → POST /api/client/payments
-  → INSERT payments (status=pending, reference_number)
+Modal switches to Step 2:
+  → QR code generated client-side from checkout_url (qrcode.js CDN)
+  → Clickable link to PayMongo hosted checkout page
+  → Manual reference number input (fallback)
+  → Frontend polls GET /api/client/payments/link/:linkId every 5s
          ↓
-Branch admin → Payments section → clicks Verify
-  → PUT /api/branch/payments/:id/verify
-  → UPDATE payments SET status=verified
+Client pays on PayMongo checkout page
+         ↓
+Poll detects status=paid
+  → UPDATE payments SET status=verified WHERE reference_number=linkId
   → UPDATE subscriptions SET payment_status=paid
+  → Toast "Payment confirmed!" → modal closes → payment history refreshes
+```
+
+## Application → Client Lifecycle
+
+```
+New user registers → applies for plan (POST /api/client/apply)
+  → INSERT applications (status=pending)
+         ↓
+Branch admin approves → PUT /api/branch/applications/:id { status: approved }
+         ↓
+Branch admin schedules → POST /api/branch/schedule
+  → INSERT installation_schedule
+  → UPDATE applications SET status=scheduled
+         ↓
+Branch admin marks installed → PUT /api/branch/applications/:id { status: installed }
+  → INSERT clients (status=active)
+  → INSERT subscriptions (status=active, payment_status=unpaid)
+  → Client dashboard unlocks all modules
 ```
 
 ## Database Schema
@@ -121,6 +151,8 @@ ticket_replies       — id, ticket_id, user_id, message, is_staff_reply, create
 password_resets      — id, user_id, token, expires_at, used, created_at
 login_logs           — id, user_id, username, ip_address, user_agent, status, created_at
 ```
+
+> Note: `branches.gcash_number` stores the PayMongo number used for QR payment generation.
 
 ### Enums
 
@@ -159,16 +191,24 @@ login_logs           — id, user_id, username, ip_address, user_agent, status, 
 
 ## Frontend Features
 
-| Feature              | Scope                        | Notes                                          |
-|----------------------|------------------------------|------------------------------------------------|
-| Dark / Light mode    | All dashboards               | Toggle button in topbar, saved to localStorage |
-| Search               | All table modules            | Filters rows client-side                       |
-| Export CSV           | All table modules            | Downloads filtered rows as .csv                |
-| Export PDF           | All table modules            | Opens print-ready page in new tab              |
-| GCash QR modal       | Client dashboard             | Fetches QR on open, shows gcash deep link      |
-| Inline form errors   | Registration page            | Per-field validation before submit             |
-| Applications badge   | Branch dashboard nav         | Shows real pending count from API              |
-| Time slot picker     | Branch schedule form         | Hour + minute + AM/PM dropdowns with preview   |
+| Feature              | Scope                        | Notes                                            |
+|----------------------|------------------------------|--------------------------------------------------|
+| Dark / Light mode    | All dashboards               | Toggle button in topbar, saved to localStorage   |
+| Search               | All table modules            | Filters rows client-side                         |
+| Export CSV           | All table modules            | Downloads filtered rows as .csv                  |
+| Export PDF           | All table modules            | Opens print-ready page in new tab                |
+| PayMongo payment     | Client dashboard             | Generates checkout link + QR, polls for confirm  |
+| Auto payment verify  | Client dashboard             | Polls PayMongo API, auto-verifies on paid status |
+| Inline form errors   | Registration page            | Per-field validation before submit               |
+| Applications badge   | Branch dashboard nav         | Shows real pending count from API                |
+| Time slot picker     | Branch schedule form         | Hour + minute + AM/PM dropdowns with preview     |
+
+## Services
+
+| File                | Purpose                                              |
+|---------------------|------------------------------------------------------|
+| emailService.js     | Stub — logs to console. Replace with nodemailer/SendGrid |
+| paymongoService.js  | `createPaymentLink()` and `getPaymentLink()` via PayMongo REST API |
 
 ## API Routes
 
@@ -215,19 +255,21 @@ login_logs           — id, user_id, username, ip_address, user_agent, status, 
 | POST   | /schedule             | Add schedule entry        |
 
 ### /api/client (role: client)
-| Method | Path          | Description                     |
-|--------|---------------|---------------------------------|
-| GET    | /dashboard    | Client dashboard                |
-| GET    | /profile      | Get profile                     |
-| PUT    | /profile      | Update profile                  |
-| GET    | /subscription | Active subscription             |
-| GET    | /payments/qr  | GCash QR code + branch info     |
-| GET    | /payments     | Payment history                 |
-| POST   | /payments     | Submit payment (reference #)    |
-| GET    | /tickets      | My tickets                      |
-| POST   | /tickets      | Submit ticket                   |
-| POST   | /apply        | Apply for connection            |
-| GET    | /plans        | Available plans                 |
+| Method | Path                   | Description                     |
+|--------|------------------------|---------------------------------|
+| GET    | /dashboard             | Client dashboard                |
+| GET    | /profile               | Get profile                     |
+| PUT    | /profile               | Update profile                  |
+| GET    | /subscription          | Active subscription             |
+| GET    | /payments/qr           | PayMongo QR (legacy)            |
+| GET    | /payments              | Payment history                 |
+| POST   | /payments              | Submit payment (reference #)    |
+| POST   | /payments/link         | Create PayMongo payment link    |
+| GET    | /payments/link/:linkId | Check PayMongo payment status   |
+| GET    | /tickets               | My tickets                      |
+| POST   | /tickets               | Submit ticket                   |
+| POST   | /apply                 | Apply for connection            |
+| GET    | /plans                 | Available plans                 |
 
 ### /api/health (public)
 | Method | Path | Description  |
@@ -236,14 +278,14 @@ login_logs           — id, user_id, username, ip_address, user_agent, status, 
 
 ## Seed Data
 
-| Entity           | Count | Notes                                                   |
-|------------------|-------|---------------------------------------------------------|
-| Payment methods  | 4     | GCash, Bank Transfer, Cash, Online Credit Card          |
-| Plans            | 4     | Fiber 25/50/100/200 (999–2999 PHP/mo)                   |
-| Branches         | 4     | QC, Makati, Manila, Eastwood (GCash: 09507724215)       |
-| Users (staff)    | 5     | 1 admin (`superadmin`) + 4 branch managers              |
-| Users (clients)  | 6     | juandc, mariasantos, carlom, sofian, jeromeb, ginalopez |
-| Subscriptions    | 5     | Mix of paid/unpaid                                      |
-| Applications     | 2     | Both approved, with installation schedules              |
-| Payments         | 3     | All verified                                            |
-| Tickets          | 3     | 2 open, 1 resolved                                      |
+| Entity           | Count | Notes                                                        |
+|------------------|-------|--------------------------------------------------------------|
+| Payment methods  | 4     | PayMongo, Bank Transfer, Cash, Online Credit Card            |
+| Plans            | 4     | Fiber 25/50/100/200 (999–2999 PHP/mo)                        |
+| Branches         | 4     | QC, Makati, Manila, Eastwood (PayMongo #: 09507724215)       |
+| Users (staff)    | 5     | 1 admin (`superadmin`) + 4 branch managers                   |
+| Users (clients)  | 6     | juandc, mariasantos, carlom, sofian, jeromeb, ginalopez      |
+| Subscriptions    | 5     | Mix of paid/unpaid                                           |
+| Applications     | 2     | Both approved, with installation schedules                   |
+| Payments         | 3     | All verified                                                 |
+| Tickets          | 3     | 2 open, 1 resolved                                           |

@@ -102,7 +102,7 @@
         </div>
         <div class="adm-tbl-wrap">
           <div class="adm-tbl-hdr"><span class="adm-tbl-title">🏢 All Branches</span><div class="srch-dk"><span>🔍</span><input type="text" placeholder="Search branch…"/></div></div>
-          <table><thead><tr><th>Branch Name</th><th>Address</th><th>GCash #</th><th>Clients</th><th>Status</th><th>Actions</th></tr></thead><tbody id="branches-tbody"></tbody></table>
+          <table><thead><tr><th>Branch Name</th><th>Address</th><th>PayMongo #</th><th>Clients</th><th>Status</th><th>Actions</th></tr></thead><tbody id="branches-tbody"></tbody></table>
         </div>
         <div class="adm-g2">
           <div class="adm-panel"><div class="adm-panel-hdr">📊 Revenue Comparison</div><canvas id="branch-rev-chart" height="200"></canvas></div>
@@ -322,7 +322,7 @@
     <div class="modal-hdr"><h3 class="modal-hdr-title">🏢 Add New Branch</h3><button class="modal-close" onclick="closeModal('add-branch-modal')">×</button></div>
     <div class="fg"><label class="fl">Branch Name</label><input type="text" class="inp-dk" id="new-branch-name" placeholder="e.g. Oftix Caloocan"/></div>
     <div class="fg"><label class="fl">Address</label><input type="text" class="inp-dk" id="new-branch-address" placeholder="City, Metro Manila"/></div>
-    <div class="fg"><label class="fl">GCash Number</label><input type="text" class="inp-dk" id="new-branch-gcash" placeholder="09XX-XXX-XXXX"/></div>
+    <div class="fg"><label class="fl">PayMongo Number</label><input type="text" class="inp-dk" id="new-branch-paymongo" placeholder="09XX-XXX-XXXX"/></div>
     <button class="btn btn-primary-dk btn-full" onclick="addBranch()">✅ Add Branch</button>
   </div>
 </div>

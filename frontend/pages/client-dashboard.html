@@ -299,15 +299,15 @@
           <div class="d-card-hdr" style="font-size:.82rem;font-weight:800;color:var(--cli-accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px;padding-bottom:13px;border-bottom:2px solid var(--cli-border)">💡 How to Pay</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
             <div class="d-howpay" style="background:rgba(0,85,229,.04);border:1.5px solid var(--cli-border);border-radius:14px;padding:20px">
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="font-size:1.8rem">📱</span><div><div style="font-weight:900;color:var(--cli-text)">GCash</div><div style="font-size:.78rem;color:var(--cli-muted)">Fast &amp; convenient</div></div></div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="font-size:1.8rem">📱</span><div><div style="font-weight:900;color:var(--cli-text)">PayMongo</div><div style="font-size:.78rem;color:var(--cli-muted)">Fast &amp; convenient</div></div></div>
               <ol style="padding-left:18px;font-size:.87rem;color:var(--cli-text);line-height:2;margin-bottom:14px">
-                <li>Open <strong>GCash</strong> app</li>
+                <li>Open <strong>PayMongo</strong> app</li>
                 <li>Tap <strong>Send Money</strong></li>
-                <li>Send to: <strong id="disp-gcash" style="color:var(--cli-accent)">09171234567</strong></li>
+                <li>Send to: <strong id="disp-paymongo" style="color:var(--cli-accent)">09171234567</strong></li>
                 <li>Enter exact amount</li>
                 <li>Screenshot &amp; upload receipt</li>
               </ol>
-              <button class="btn btn-primary-lt btn-full" onclick="openPaymentModal(0,0)">📱 Pay via GCash</button>
+              <button class="btn btn-primary-lt btn-full" onclick="openPaymentModal(0,0)">📱 Pay via PayMongo</button>
             </div>
             <div class="d-howpay" style="background:rgba(0,85,229,.04);border:1.5px solid var(--cli-border);border-radius:14px;padding:20px">
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="font-size:1.8rem">🏢</span><div><div style="font-weight:900;color:var(--cli-text)">Walk-in / Cash</div><div style="font-size:.78rem;color:var(--cli-muted)">Pay at the branch</div></div></div>
@@ -326,9 +326,9 @@
           <table class="cli-table"><thead><tr><th>Period</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th></tr></thead>
           <tbody>
             <tr><td>March 2026</td><td>₱1,499.00</td><td>—</td><td>—</td><td><span class="badge badge-warning">Pending</span></td></tr>
-            <tr><td>February 2026</td><td>₱1,499.00</td><td>GCash</td><td>Feb 5, 2026</td><td><span class="badge badge-success">Paid ✅</span></td></tr>
+            <tr><td>February 2026</td><td>₱1,499.00</td><td>PayMongo</td><td>Feb 5, 2026</td><td><span class="badge badge-success">Paid ✅</span></td></tr>
             <tr><td>January 2026</td><td>₱1,499.00</td><td>Walk-in</td><td>Jan 4, 2026</td><td><span class="badge badge-success">Paid ✅</span></td></tr>
-            <tr><td>December 2025</td><td>₱1,499.00</td><td>GCash</td><td>Dec 3, 2025</td><td><span class="badge badge-success">Paid ✅</span></td></tr>
+            <tr><td>December 2025</td><td>₱1,499.00</td><td>PayMongo</td><td>Dec 3, 2025</td><td><span class="badge badge-success">Paid ✅</span></td></tr>
           </tbody></table>
         </div>
       </div>
@@ -384,24 +384,34 @@
 
 <!-- PAYMENT MODAL -->
 <div class="modal-overlay" id="payment-modal" style="display:none">
-  <div class="modal-lt" style="max-width:480px">
-    <div class="modal-hdr"><h3 class="modal-hdr-title" style="font-family:'Nunito',sans-serif">💳 Pay via GCash</h3><button class="modal-close" onclick="closeModal('payment-modal')">×</button></div>
-    <div style="background:linear-gradient(135deg,#0044cc,#0066ff);border-radius:14px;padding:18px 20px;margin-bottom:18px;color:#fff;display:flex;justify-content:space-between;align-items:center">
-      <div><div style="font-size:.7rem;opacity:.8;font-weight:700;text-transform:uppercase;letter-spacing:.07em">Amount Due</div><div style="font-size:1.8rem;font-weight:900" id="qr-amount-disp">₱0.00</div></div>
-      <div style="text-align:right"><div style="font-size:.7rem;opacity:.8;font-weight:700;text-transform:uppercase;letter-spacing:.07em">Branch</div><div style="font-size:.95rem;font-weight:800" id="qr-branch-disp">—</div></div>
-    </div>
-    <div style="text-align:center;margin-bottom:16px">
-      <div style="font-size:.75rem;font-weight:700;color:var(--cli-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Scan to Pay</div>
-      <div id="qr-loading" style="padding:20px;color:var(--cli-muted);font-size:.9rem">Loading QR code…</div>
-      <img id="qr-img" src="" alt="GCash QR" style="display:none;width:200px;height:200px;border-radius:12px;border:3px solid var(--cli-border)"/>
-      <div style="margin-top:10px;font-size:1rem;font-weight:900;color:var(--cli-accent)" id="qr-gcash-num">—</div>
-      <div style="font-size:.8rem;color:var(--cli-muted);margin-top:3px">GCash Number</div>
-    </div>
-    <div class="fg-lt"><label class="fl-lt">GCash Reference Number</label><input type="text" class="inp-lt" id="pay-ref" placeholder="e.g. 1234567890"/></div>
+  <div class="modal-lt" style="max-width:460px">
+    <div class="modal-hdr"><h3 class="modal-hdr-title" style="font-family:'Nunito',sans-serif">💳 Pay via PayMongo</h3><button class="modal-close" onclick="closeModal('payment-modal')">×</button></div>
     <input type="hidden" id="pay-sub-id"/>
     <input type="hidden" id="pay-amount-val"/>
-    <button class="btn btn-primary-lt btn-full" onclick="submitPayment()">✅ Submit Payment</button>
-    <p style="font-size:.8rem;color:var(--cli-muted);text-align:center;margin-top:10px">Verified by branch within 24 hours.</p>
+    <input type="hidden" id="qr-amount-disp"/>
+    <input type="hidden" id="qr-branch-disp"/>
+
+    <!-- Step 1 -->
+    <div id="pm-step1">
+      <p style="font-size:.92rem;color:var(--cli-muted);margin-bottom:18px;text-align:center">Click below to generate your PayMongo payment link and QR code.</p>
+      <button class="btn btn-primary-lt btn-full" id="paymongo-link-btn" onclick="payWithPayMongo()" style="font-size:1rem;padding:14px">⚡ Generate PayMongo Payment</button>
+    </div>
+
+    <!-- Step 2: shown after generation -->
+    <div id="pm-step2" style="display:none">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:.75rem;font-weight:700;color:var(--cli-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Scan QR or click link to pay</div>
+        <div id="qr-loading" style="padding:20px;color:var(--cli-muted);font-size:.9rem">Generating…</div>
+        <img id="qr-img" src="" alt="PayMongo QR" style="display:none;width:200px;height:200px;border-radius:12px;border:3px solid var(--cli-border)"/>
+        <div id="paymongo-link-status" style="margin-top:12px;font-size:.92rem"></div>
+      </div>
+      <div style="border-top:1.5px solid var(--cli-border);padding-top:16px">
+        <div style="text-align:center;font-size:.78rem;color:var(--cli-muted);margin-bottom:10px">— or enter reference number manually —</div>
+        <div class="fg-lt"><label class="fl-lt">PayMongo Reference Number</label><input type="text" class="inp-lt" id="pay-ref" placeholder="e.g. 1234567890"/></div>
+        <button class="btn btn-outline-lt btn-full" onclick="submitPayment()">✅ Submit Reference</button>
+      </div>
+    </div>
+    <p style="font-size:.8rem;color:var(--cli-muted);text-align:center;margin-top:12px">Verified by branch within 24 hours.</p>
   </div>
 </div>
 
@@ -417,7 +427,7 @@
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
       <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px">
         <span style="font-size:1.5rem;flex-shrink:0">📱</span>
-        <div><div style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">GCash / Contact</div><div style="font-size:1.05rem;font-weight:800;color:var(--cli-accent)" id="contact-gcash">09171234567</div></div>
+        <div><div style="font-size:.68rem;font-weight:700;color:var(--cli-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">PayMongo / Contact</div><div style="font-size:1.05rem;font-weight:800;color:var(--cli-accent)" id="contact-paymongo">09171234567</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--cli-card2);border:1.5px solid var(--cli-border);border-radius:12px">
         <span style="font-size:1.5rem;flex-shrink:0">☎️</span>
@@ -435,6 +445,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script src="/assets/js/script.js"></script>
 <script>
 // ── Dark mode toggle + fiber canvas ──
@@ -516,12 +527,12 @@ function openContactModal(){
   let branch = null;
   if(user.branch_id) branch = branches.find(b => b.id === user.branch_id);
   if(!branch && cd.branch) branch = branches.find(b => b.name === cd.branch);
-  if(!branch) branch = branches[0] || {name:'Oftix Network',gcash:'09171234567',address:'Metro Manila'};
+  if(!branch) branch = branches[0] || {name:'Oftix Network',paymongo:'09171234567',address:'Metro Manila'};
 
   const el = id => document.getElementById(id);
   if(el('contact-branch-name')) el('contact-branch-name').textContent = branch.name || 'Oftix Network';
   if(el('contact-branch-addr')) el('contact-branch-addr').textContent = branch.address || 'Metro Manila';
-  if(el('contact-gcash'))       el('contact-gcash').textContent = branch.gcash || '09171234567';
+  if(el('contact-paymongo'))       el('contact-paymongo').textContent = branch.paymongo || '09171234567';
 
   openModal('contact-modal');
 }
